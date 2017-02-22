@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <ENV>
+  </ENV>
+  <DataBase>
+    <HostName>222.117.10.69</HostName>
+    <DataBaseName>DAINUTIL</DataBaseName>
+    <UserId>sa</UserId>
+    <Password>rk9800</Password>
+    <DriverName>SQL Server</DriverName>
+    <QueryTimeout>30</QueryTimeout>
+
+    <!--<HostName>localhost\DAINTOOL</HostName>
+    <DataBaseName>DAINTOOL</DataBaseName>
+    <UserId>sa</UserId>
+    <Password>daintool</Password>
+    <DriverName>SQL Server</DriverName>
+    <QueryTimeout>30</QueryTimeout>-->
+  </DataBase>
+</root>
