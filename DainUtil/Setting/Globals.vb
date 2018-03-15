@@ -1,12 +1,14 @@
 ﻿Imports System.Data.SqlClient
+Imports System.Net
 Module Globals
+    Public G_IPUser As String = ""
 
     Public G_APPNAME As String
     Public G_Version As String
     Public G_APPPath As String = Application.StartupPath()
     Public G_ExcelInPath As String = G_APPPath + "\Import\"
     Public G_TextoutPath As String = G_APPPath + "\Export\"
-    Public G_DBPath As String = G_APPPath + "\db\dain.accdb"
+    'Public G_DBPath As String = G_APPPath + "\db\dain.accdb"
 
     Public Const gsXmlSetting As String = "SET.xml"                     '設定ﾌｧｲﾙ(得意先個別)
     Public Const gsXmlQuery As String = "QUERY.xml"
@@ -39,7 +41,14 @@ Module Globals
     Public R_CUSTOMMASTER As Integer = 902
     Public R_WHERE As String
 
-
+    Public Function GetIPUser() As Boolean
+        G_IPUser = ""
+        Dim hostname As String = Dns.GetHostName()
+        Dim adrList As IPAddress() = Dns.GetHostAddresses(hostname)
+        For Each address As IPAddress In adrList
+            G_IPUser = address.ToString()
+        Next
+    End Function
     Public Function DbConnect() As Boolean
 
         Dim builder_sql As New System.Data.SqlClient.SqlConnectionStringBuilder

@@ -36,7 +36,7 @@ Partial Class FrmCustomMaster
         '
         Me.cmbStandard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbStandard.FormattingEnabled = True
-        Me.cmbStandard.Location = New System.Drawing.Point(80, 16)
+        Me.cmbStandard.Location = New System.Drawing.Point(90, 16)
         Me.cmbStandard.Name = "cmbStandard"
         Me.cmbStandard.Size = New System.Drawing.Size(296, 20)
         Me.cmbStandard.TabIndex = 0
@@ -46,9 +46,9 @@ Partial Class FrmCustomMaster
         Me.lblMasterCombo.AutoSize = True
         Me.lblMasterCombo.Location = New System.Drawing.Point(13, 20)
         Me.lblMasterCombo.Name = "lblMasterCombo"
-        Me.lblMasterCombo.Size = New System.Drawing.Size(61, 12)
+        Me.lblMasterCombo.Size = New System.Drawing.Size(73, 12)
         Me.lblMasterCombo.TabIndex = 1
-        Me.lblMasterCombo.Text = "표준코드 :"
+        Me.lblMasterCombo.Text = "커스텀코드 :"
         '
         'DataGridView1
         '
@@ -131,7 +131,7 @@ Partial Class FrmCustomMaster
         Me.Name = "FrmCustomMaster"
         Me.ShowIcon = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
-        Me.Text = "표준마스터"
+        Me.Text = "커스텀마스터"
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()

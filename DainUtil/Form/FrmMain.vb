@@ -3,11 +3,15 @@
 Public Class FrmMain
 
     Private Sub FrmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        'G_IPUser
+        GetIPUser()
         DbConnect()
         Interval()
         GetEnv()
         Me.Text = G_APPNAME + "(" + G_Version + ")"
         ClearData()
+
+        WriteLog("프로그램실행")
     End Sub
 
     Private Sub btnInvoice_Click(sender As Object, e As EventArgs) Handles btnInvoice.Click
@@ -44,6 +48,7 @@ Public Class FrmMain
     Private Sub FrmMain_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
         Try
             dbConn.Close()
+            WriteLog("프로그램 종료", N)
         Catch ex As Exception
             MsgBoxFail(ex.Message)
         End Try

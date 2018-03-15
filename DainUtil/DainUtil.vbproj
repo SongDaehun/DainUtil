@@ -170,7 +170,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Setting\Initial.vb" />
-    <Compile Include="Setting\ModFunc.vb" />
     <Compile Include="Setting\Util.vb" />
   </ItemGroup>
   <ItemGroup>

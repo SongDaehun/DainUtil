@@ -3471,6 +3471,81 @@ Module Initial
             cmd.ExecuteNonQuery()
             cmd.Dispose()
         End If
+
+        If vmenteStep < 19 Then
+            strSQL = " DROP TABLE M_CUSTOMCODESET "
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+
+            strSQL = " INSERT INTO  M_CUSTOMCODENAME VALUES('LOADING PORT','') "
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+
+            strSQL = " CREATE TABLE M_CUSTOMCODESET ( "
+            strSQL &= " [CODEDIV] [nvarchar](255) NOT NULL, "
+            strSQL &= " [CONTENTSCODE] [nvarchar](20) NOT NULL, "
+            strSQL &= " [CONTENTS] [nvarchar](255) NOT NULL , "
+            strSQL &= " [ABBREVIATION] [nvarchar](255) NULL, "
+            strSQL &= " [REFERENCE] [nvarchar](255) NULL, "
+            strSQL &= " PRIMARY KEY ( 	[CODEDIV] ASC, 	[CONTENTSCODE] ASC, 	[CONTENTS] ASC) "
+            strSQL &= " )  "
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+
+            strSQL = " INSERT INTO M_CUSTOMCODESET VALUES ('협정','01','한-중 FTA','','')  "
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+
+            strSQL = " INSERT INTO M_CUSTOMCODESET VALUES ('협정','02','APTA','','')  "
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+
+            strSQL = "UPDATE F_GENENV Set MENTESTEP = '19'"
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+        End If
+
+        If vmenteStep < 20 Then
+            strSQL = "DELETE FROM F_LISTOUTITEM WHERE MESSAGEID = '902'"
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+
+            strSQL = "INSERT INTO F_LISTOUTITEM SELECT '902' AS MESSAGEID,PRECESSINGCLASS,COLUMNNAME,INDICATIONNAME,INDICATIONWIDTH,INDICATIONWIDEPOSITION,INDICATIONORDER,VISIBLE,DATATYPE,DATAFORMAT  FROM F_LISTOUTITEM WHERE MESSAGEID = '900'"
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+
+            strSQL = "UPDATE F_GENENV Set MENTESTEP = '20'"
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+        End If
+
+        If vmenteStep < 21 Then
+            strSQL = " DELETE FROM F_LISTOUTITEM_INI"
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+
+            strSQL = " INSERT INTO F_LISTOUTITEM_INI SELECT * FROM F_LISTOUTITEM"
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+
+            strSQL = "UPDATE F_GENENV Set MENTESTEP = '21'"
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+        End If
+
+
     End Function
 
 End Module

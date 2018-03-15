@@ -22,22 +22,22 @@ Partial Class FrmMain
     '코드 편집기에서는 수정하지 마세요.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim Office2010Green1 As DainUtil.ManiX.Office2010Green = New DainUtil.ManiX.Office2010Green()
         Dim Office2010Blue1 As DainUtil.ManiX.Office2010Blue = New DainUtil.ManiX.Office2010Blue()
         Dim Office2010Yellow1 As DainUtil.ManiX.Office2010Yellow = New DainUtil.ManiX.Office2010Yellow()
-        Dim Office2010Green1 As DainUtil.ManiX.Office2010Green = New DainUtil.ManiX.Office2010Green()
         Me.GrpExport = New System.Windows.Forms.GroupBox()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
         Me.GrpImport = New System.Windows.Forms.GroupBox()
         Me.XButton3 = New DainUtil.ManiX.XButton()
         Me.XButton2 = New DainUtil.ManiX.XButton()
         Me.XButton1 = New DainUtil.ManiX.XButton()
+        Me.btnCustom = New DainUtil.ManiX.XButton()
         Me.btnItemMaster = New DainUtil.ManiX.XButton()
         Me.btnStandardMaster = New DainUtil.ManiX.XButton()
         Me.btnGenEnv = New DainUtil.ManiX.XButton()
         Me.btnInvoice = New DainUtil.ManiX.XButton()
         Me.btnExcelImport = New DainUtil.ManiX.XButton()
         Me.btnTextOutput = New DainUtil.ManiX.XButton()
-        Me.btnCustom = New DainUtil.ManiX.XButton()
         Me.GrpExport.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GrpImport.SuspendLayout()
@@ -80,6 +80,7 @@ Partial Class FrmMain
         Me.GrpImport.TabIndex = 6
         Me.GrpImport.TabStop = False
         Me.GrpImport.Text = "수입"
+        Me.GrpImport.Visible = False
         '
         'XButton3
         '
@@ -116,6 +117,35 @@ Partial Class FrmMain
         Me.XButton1.Text = "Invoice/Packinglist"
         Me.XButton1.Theme = DainUtil.ManiX.Theme.MSOffice2010_BLUE
         Me.XButton1.UseVisualStyleBackColor = True
+        '
+        'btnCustom
+        '
+        Office2010Green1.BorderColor1 = System.Drawing.Color.FromArgb(CType(CType(31, Byte), Integer), CType(CType(72, Byte), Integer), CType(CType(161, Byte), Integer))
+        Office2010Green1.BorderColor2 = System.Drawing.Color.FromArgb(CType(CType(68, Byte), Integer), CType(CType(135, Byte), Integer), CType(CType(228, Byte), Integer))
+        Office2010Green1.ButtonMouseOverColor1 = System.Drawing.Color.FromArgb(CType(CType(236, Byte), Integer), CType(CType(199, Byte), Integer), CType(CType(87, Byte), Integer))
+        Office2010Green1.ButtonMouseOverColor2 = System.Drawing.Color.FromArgb(CType(CType(252, Byte), Integer), CType(CType(243, Byte), Integer), CType(CType(215, Byte), Integer))
+        Office2010Green1.ButtonMouseOverColor3 = System.Drawing.Color.FromArgb(CType(CType(249, Byte), Integer), CType(CType(225, Byte), Integer), CType(CType(137, Byte), Integer))
+        Office2010Green1.ButtonMouseOverColor4 = System.Drawing.Color.FromArgb(CType(CType(251, Byte), Integer), CType(CType(249, Byte), Integer), CType(CType(224, Byte), Integer))
+        Office2010Green1.ButtonNormalColor1 = System.Drawing.Color.FromArgb(CType(CType(42, Byte), Integer), CType(CType(126, Byte), Integer), CType(CType(43, Byte), Integer))
+        Office2010Green1.ButtonNormalColor2 = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(184, Byte), Integer), CType(CType(67, Byte), Integer))
+        Office2010Green1.ButtonNormalColor3 = System.Drawing.Color.FromArgb(CType(CType(42, Byte), Integer), CType(CType(126, Byte), Integer), CType(CType(43, Byte), Integer))
+        Office2010Green1.ButtonNormalColor4 = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(184, Byte), Integer), CType(CType(67, Byte), Integer))
+        Office2010Green1.ButtonSelectedColor1 = System.Drawing.Color.FromArgb(CType(CType(236, Byte), Integer), CType(CType(199, Byte), Integer), CType(CType(87, Byte), Integer))
+        Office2010Green1.ButtonSelectedColor2 = System.Drawing.Color.FromArgb(CType(CType(252, Byte), Integer), CType(CType(243, Byte), Integer), CType(CType(215, Byte), Integer))
+        Office2010Green1.ButtonSelectedColor3 = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(117, Byte), Integer))
+        Office2010Green1.ButtonSelectedColor4 = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(216, Byte), Integer), CType(CType(107, Byte), Integer))
+        Office2010Green1.HoverTextColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(57, Byte), Integer), CType(CType(91, Byte), Integer))
+        Office2010Green1.SelectedTextColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(57, Byte), Integer), CType(CType(91, Byte), Integer))
+        Office2010Green1.TextColor = System.Drawing.Color.White
+        Me.btnCustom.ColorTable = Office2010Green1
+        Me.btnCustom.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnCustom.Location = New System.Drawing.Point(152, 54)
+        Me.btnCustom.Name = "btnCustom"
+        Me.btnCustom.Size = New System.Drawing.Size(123, 28)
+        Me.btnCustom.TabIndex = 6
+        Me.btnCustom.Text = "커스텀마스터"
+        Me.btnCustom.Theme = DainUtil.ManiX.Theme.MSOffice2010_Green
+        Me.btnCustom.UseVisualStyleBackColor = True
         '
         'btnItemMaster
         '
@@ -222,35 +252,6 @@ Partial Class FrmMain
         Me.btnTextOutput.Text = "▼Output"
         Me.btnTextOutput.Theme = DainUtil.ManiX.Theme.MSOffice2010_Yellow
         Me.btnTextOutput.UseVisualStyleBackColor = True
-        '
-        'btnCustom
-        '
-        Office2010Green1.BorderColor1 = System.Drawing.Color.FromArgb(CType(CType(31, Byte), Integer), CType(CType(72, Byte), Integer), CType(CType(161, Byte), Integer))
-        Office2010Green1.BorderColor2 = System.Drawing.Color.FromArgb(CType(CType(68, Byte), Integer), CType(CType(135, Byte), Integer), CType(CType(228, Byte), Integer))
-        Office2010Green1.ButtonMouseOverColor1 = System.Drawing.Color.FromArgb(CType(CType(236, Byte), Integer), CType(CType(199, Byte), Integer), CType(CType(87, Byte), Integer))
-        Office2010Green1.ButtonMouseOverColor2 = System.Drawing.Color.FromArgb(CType(CType(252, Byte), Integer), CType(CType(243, Byte), Integer), CType(CType(215, Byte), Integer))
-        Office2010Green1.ButtonMouseOverColor3 = System.Drawing.Color.FromArgb(CType(CType(249, Byte), Integer), CType(CType(225, Byte), Integer), CType(CType(137, Byte), Integer))
-        Office2010Green1.ButtonMouseOverColor4 = System.Drawing.Color.FromArgb(CType(CType(251, Byte), Integer), CType(CType(249, Byte), Integer), CType(CType(224, Byte), Integer))
-        Office2010Green1.ButtonNormalColor1 = System.Drawing.Color.FromArgb(CType(CType(42, Byte), Integer), CType(CType(126, Byte), Integer), CType(CType(43, Byte), Integer))
-        Office2010Green1.ButtonNormalColor2 = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(184, Byte), Integer), CType(CType(67, Byte), Integer))
-        Office2010Green1.ButtonNormalColor3 = System.Drawing.Color.FromArgb(CType(CType(42, Byte), Integer), CType(CType(126, Byte), Integer), CType(CType(43, Byte), Integer))
-        Office2010Green1.ButtonNormalColor4 = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(184, Byte), Integer), CType(CType(67, Byte), Integer))
-        Office2010Green1.ButtonSelectedColor1 = System.Drawing.Color.FromArgb(CType(CType(236, Byte), Integer), CType(CType(199, Byte), Integer), CType(CType(87, Byte), Integer))
-        Office2010Green1.ButtonSelectedColor2 = System.Drawing.Color.FromArgb(CType(CType(252, Byte), Integer), CType(CType(243, Byte), Integer), CType(CType(215, Byte), Integer))
-        Office2010Green1.ButtonSelectedColor3 = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(117, Byte), Integer))
-        Office2010Green1.ButtonSelectedColor4 = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(216, Byte), Integer), CType(CType(107, Byte), Integer))
-        Office2010Green1.HoverTextColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(57, Byte), Integer), CType(CType(91, Byte), Integer))
-        Office2010Green1.SelectedTextColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(57, Byte), Integer), CType(CType(91, Byte), Integer))
-        Office2010Green1.TextColor = System.Drawing.Color.White
-        Me.btnCustom.ColorTable = Office2010Green1
-        Me.btnCustom.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnCustom.Location = New System.Drawing.Point(152, 54)
-        Me.btnCustom.Name = "btnCustom"
-        Me.btnCustom.Size = New System.Drawing.Size(123, 28)
-        Me.btnCustom.TabIndex = 6
-        Me.btnCustom.Text = "커스텀마스터"
-        Me.btnCustom.Theme = DainUtil.ManiX.Theme.MSOffice2010_Green
-        Me.btnCustom.UseVisualStyleBackColor = True
         '
         'FrmMain
         '

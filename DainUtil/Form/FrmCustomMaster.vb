@@ -219,10 +219,17 @@ Public Class FrmCustomMaster
             cmd = New SqlCommand(strSQL, dbConn)
             cmd.ExecuteNonQuery()
 
-            While DataGridView1.Rows(i).Cells(1).Value <> ""
+            While DataGridView1.Rows(i).Cells(1).Value &
+                DataGridView1.Rows(i).Cells(2).Value &
+                DataGridView1.Rows(i).Cells(3).Value &
+                DataGridView1.Rows(i).Cells(4).Value &
+                DataGridView1.Rows(i).Cells(5).Value <> ""
                 strSQL = "INSERT INTO M_CUSTOMCODESET VALUES("
                 strSQL &= ColumnSet(cmbdatatable.Rows(cmbStandard.SelectedIndex)("STANDARDNAME"))
-                strSQL &= "," & ColumnSet(DataGridView1.Rows(i).Cells(1).Value) & ")"
+                strSQL &= "," & ColumnSet(DataGridView1.Rows(i).Cells(1).Value)
+                strSQL &= "," & ColumnSet(DataGridView1.Rows(i).Cells(2).Value)
+                strSQL &= "," & ColumnSet(DataGridView1.Rows(i).Cells(3).Value)
+                strSQL &= "," & ColumnSet(DataGridView1.Rows(i).Cells(4).Value) & ")"
                 cmd = New SqlCommand(strSQL, dbConn)
                 cmd.ExecuteNonQuery()
                 cmd.Dispose()

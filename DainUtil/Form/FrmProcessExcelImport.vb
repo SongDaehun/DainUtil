@@ -47,35 +47,41 @@ Public Class FrmProcessExcelImport
             Select Case type
                 Case 0      '검증
                     txtLog.Text = txtLog.Text & vbCrLf & "[검증]" & log
-                Case 1      '추가
+                    WriteLog(log, W)
+                Case 1      '추가`
                     If ProgressBar1.Value + 1 <= ProgressBar1.Maximum Then
                         ProgressBar1.Value = ProgressBar1.Value + 1
                     End If
                     lblPercent.Text = CInt(ProgressBar1.Value / ProgressBar1.Maximum * 100).ToString & "%"
                     txtLog.Text = txtLog.Text & vbCrLf & "[추가]" & log
+                    WriteLog(log, S)
                 Case 2     '실패
                     txtLog.Text = txtLog.Text & vbCrLf & "[실패]" & log
+                    WriteLog(log, E)
                 Case 3     '알림
                     txtLog.Text = txtLog.Text & vbCrLf & "[알림]" & log
+                    WriteLog(log, N)
             End Select
 
         Else
             Select Case type
                 Case 0      '검증
                     txtLog.Text = "[검증]" & log
+                    WriteLog(log, W)
                 Case 1      '추가
                     If ProgressBar1.Value + 1 <= ProgressBar1.Maximum Then
                         ProgressBar1.Value = ProgressBar1.Value + 1
                     End If
                     lblPercent.Text = CInt(ProgressBar1.Value / ProgressBar1.Maximum * 100).ToString & "%"
                     txtLog.Text = "[추가]" & log
+                    WriteLog(log, N)
                 Case 2     '실패
                     txtLog.Text = "[실패]" & log
+                    WriteLog(log, E)
                 Case 3     '알림
                     txtLog.Text = "[알림]" & log
+                    WriteLog(log, N)
             End Select
-
-
         End If
         txtLog.SelectionStart = txtLog.Text.Length
         txtLog.Focus()
@@ -84,11 +90,22 @@ Public Class FrmProcessExcelImport
         Me.Refresh()
     End Sub
     Private Sub FrmProcessExcelImport_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
-        If ImportCommercialInvoiceCheck() Then
-            ImportCommercialInvoice()
-        End If
+
+        files = getFiles(G_ExcelInPath, "*.xls | *.xlsx", System.IO.SearchOption.TopDirectoryOnly)
+        For i As Integer = 0 To files.Length - 1
+            If ImportCommercialInvoiceCheck(files(i)) Then
+                Exit Sub
+            End If
+        Next
+
+        For i As Integer = 0 To files.Length - 1
+            If ImportCommercialInvoice(files(i)) Then
+                Exit Sub
+            End If
+        Next
+
     End Sub
-    Private Function ImportCommercialInvoiceCheck() As Boolean
+    Private Function ImportCommercialInvoiceCheck(ByVal filepath As String) As Boolean
         Dim strSQL As String
         Dim cmd As SqlCommand
         Dim dr As SqlDataReader
@@ -105,11 +122,10 @@ Public Class FrmProcessExcelImport
 
 
         Try
-
             ImportCommercialInvoiceCheck = False
-            addlog(G_ExcelInPath & " 파일체크을 시작합니다.", 0)
-            addlog(G_ExcelInPath & " 에 엑셀파일을 체크하고 있습니다.", 0)
-            files = getFiles(G_ExcelInPath, "*.xls | *.xlsx", System.IO.SearchOption.TopDirectoryOnly)
+            addlog(filepath & " 파일체크를 시작합니다.", 0)
+            addlog(filepath & " 에 엑셀파일을 체크하고 있습니다.", 0)
+
 
             If files.Length = 0 Then
                 MsgBoxFail("임포트할 엑셀파일이 존재하지 않습니다.")
@@ -153,7 +169,7 @@ Public Class FrmProcessExcelImport
 
             FailMessage = ""
             '엑셀파일 검증
-            addlog("엑셀파일의 서식을 체크합니다.", 0)
+            addlog(filepath & "엑셀파일의 서식을 체크합니다.", 0)
             For i As Integer = 0 To files.Length - 1
                 ExistFlag = False
 
@@ -366,7 +382,7 @@ Public Class FrmProcessExcelImport
 
         End Try
     End Function
-    Private Function ImportCommercialInvoice() As Boolean
+    Private Function ImportCommercialInvoice(ByVal filepath As String) As Boolean
         Dim ImportFile As String = ""
         Dim Excel As Excel.Application = New Excel.Application
         Dim Workbook As Excel.Workbook
@@ -401,6 +417,7 @@ Public Class FrmProcessExcelImport
         Dim detailCount_adjust As Integer = 0
         Dim ItemCount As Integer = 0
         Dim InvoiceNumber As String = ""
+        Dim Loading_Port_Code As String = ""
         filecount = 0
 
         For i As Integer = 0 To files.Length - 1
@@ -420,6 +437,7 @@ Public Class FrmProcessExcelImport
                 cmd = New SqlCommand(strSQL, dbConn)
                 cmd.ExecuteNonQuery()
                 cmd.Dispose()
+                WriteLog(strSQL, W)
 
                 'If files(i).Replace(G_ExcelInPath, "").Contains("케피코") Then
                 '    DeclarationNumber = 1
@@ -535,14 +553,30 @@ Public Class FrmProcessExcelImport
                             'PURCHASEORDER NVARCHAR(30)
                             strSQL &= " ," & ColumnSet(WorksheetCI.Cells(13, 6).Value.ToString.Replace(" ", "").Replace("PURCHASEORDER", "").Replace(":", ""))
                             'LOADINGPORTCODE NVARCHAR(100)
-                            If WorksheetCI.Cells(15, 4).Value.ToString.ToUpper.Contains("AIRPORT") Then
-                                strSQL &= " ,'040'"
-                            ElseIf WorksheetCI.Cells(15, 4).Value.ToString.ToUpper.Contains("PYEONGTAEK SEAPORT") Then
-                                strSQL &= " ,'016'"
-                            ElseIf WorksheetCI.Cells(15, 4).Value.ToString.ToUpper.Contains("INCHON SEAPORT") Then
-                                strSQL &= " ,'020'"
+
+                            'If WorksheetCI.Cells(15, 4).Value.ToString.ToUpper.Contains("AIRPORT") Then
+                            '    strSQL &= " ,'040'"
+                            'ElseIf WorksheetCI.Cells(15, 4).Value.ToString.ToUpper.Contains("PYEONGTAEK SEAPORT") Then
+                            '    strSQL &= " ,'016'"
+                            'ElseIf WorksheetCI.Cells(15, 4).Value.ToString.ToUpper.Contains("INCHON SEAPORT") Then
+                            '    strSQL &= " ,'020'"
+                            'Else
+                            '    strSQL &= " ,'' "
+                            '    addlog(G_ExcelInPath & " 의 LOADING PORT가 올바르지 않습니다. " & vbCrLf &
+                            '        "AIRPORT,PYEONGTAEK SEAPORT,INCHON SEAPORT 중에 하나여야 합니다.", 2)
+                            'End If
+
+                            cmd = New SqlCommand("SELECT top 1 ISNULL(CONTENTSCODE,'') FROM M_CUSTOMCODESET WHERE CODEDIV = 'LOADING PORT'  AND CONTENTS LIKE '%" & WorksheetCI.Cells(15, 4).Value.ToString.ToUpper.Contains("AIRPORT") & "%'", dbConn)
+                            dr = cmd.ExecuteReader
+                            If dr.HasRows Then
+                                dr.Read()
+                                Loading_Port_Code = dr("CONTENTSCODE")
                             End If
+                            dr.Close()
+                            cmd.Dispose()
+
                             'LOADINGPORTNAME NVARCHAR(100)
+                            strSQL &= " ,'" & Loading_Port_Code & "'"
                             strSQL &= " ," & ColumnSet(WorksheetCI.Cells(15, 4).Value)
                             'DESTINATION NVARCHAR(100)
                             strSQL &= " ," & ColumnSet(WorksheetCI.Cells(17, 4).Value)
@@ -607,6 +641,7 @@ Public Class FrmProcessExcelImport
                             cmd = New SqlCommand(strSQL, dbConn)
                             cmd.ExecuteNonQuery()
                             cmd.Dispose()
+                            WriteLog(strSQL, W)
                             'Else
                             '    detailCount_adjust = detailCount_adjust + 15
                         End If
@@ -670,6 +705,7 @@ Public Class FrmProcessExcelImport
                                 cmd = New SqlCommand(strSQL, dbConn)
                                 cmd.ExecuteNonQuery()
                                 cmd.Dispose()
+                                WriteLog(strSQL, W)
 
                                 strSQL = " INSERT INTO W_SINGLETABLE VALUES( "
                                 strSQL &= " '" & (detailCount + detailCount_adjust + 1).ToString & "'"
@@ -681,6 +717,7 @@ Public Class FrmProcessExcelImport
                                 cmd = New SqlCommand(strSQL, dbConn)
                                 cmd.ExecuteNonQuery()
                                 cmd.Dispose()
+                                WriteLog(strSQL, W)
 
                                 addlog("[" & WorksheetCI.Cells(eRowNumber, 2).Value.ToString + "] 가 저장되었습니다.", 3)
                                 eRowNumber = eRowNumber + 1
@@ -725,13 +762,14 @@ Public Class FrmProcessExcelImport
                 cmd = New SqlCommand(strSQL, dbConn)
                 cmd.ExecuteNonQuery()
                 cmd.Dispose()
+                WriteLog(strSQL, W)
 
                 strSQL = "UPDATE W_SINGLETABLE "
                 strSQL &= "  Set PALLETAMOUNT = ROUND(PALLETRATE  * " & TotalPallet & ",0)"
                 cmd = New SqlCommand(strSQL, dbConn)
                 cmd.ExecuteNonQuery()
                 cmd.Dispose()
-
+                WriteLog(strSQL, W)
 
                 NOT_Ajusted_SingleTotalPallet = 0
                 While NOT_Ajusted_SingleTotalPallet <> TotalPallet
@@ -803,138 +841,53 @@ Public Class FrmProcessExcelImport
                 ProgressBar1.Value += 1
             Next
 
-            strSQL = " UPDATE " & W_CIPL_D & " SET PRODUCT = (SELECT TOP 1 PRODUCT FROM M_ITEM WHERE " & W_CIPL_D & ".PARTNO = M_ITEM.PARTNO)"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
+            ''2018/03/15
+            Dim ProcessCount As Integer = 1
+            While XmlReadVal(DirYenFix(G_APPPath) & gsXmlQuery, "root/IMPORT/PROCESS_" & ProcessCount) <> ""
+                If XmlReadVal(DirYenFix(G_APPPath) & gsXmlQuery, "root/IMPORT/PROCESS_" & ProcessCount).ToUpper <> "ITEMCHECK" Then
 
-            strSQL = " ALTER TABLE " & W_CIPL_D & " ADD ADJUSTDETAILSEQNO BIGINT"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
+                    strSQL = XmlReadVal(DirYenFix(G_APPPath) & gsXmlQuery, "root/IMPORT/PROCESS_" & ProcessCount)
+                    WriteLog(strSQL, W)
+                    cmd = New SqlCommand(strSQL, dbConn)
+                    cmd.ExecuteNonQuery()
+                    cmd.Dispose()
 
-            strSQL = " Update " & W_CIPL_D & " "
-            strSQL &= " Set " & W_CIPL_D & ".ADJUSTDETAILSEQNO = ADJUSTDETAILSEQNOTABLE.ADJUSTDETAILSEQNO "
-            strSQL &= " FROM " & W_CIPL_D
-            strSQL &= " INNER JOIN (Select "
-            strSQL &= " SEQNO,DETAILSEQNO,ROW_NUMBER() OVER(PARTITION BY SEQNO ORDER BY HSCODE) As ADJUSTDETAILSEQNO  "
-            strSQL &= " FROM " & W_CIPL_D & ") As ADJUSTDETAILSEQNOTABLE "
-            strSQL &= " On " & W_CIPL_D & ".SEQNO = ADJUSTDETAILSEQNOTABLE.SEQNO And " & W_CIPL_D & ".DETAILSEQNO = ADJUSTDETAILSEQNOTABLE.DETAILSEQNO  "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
+                    'XmlReadAttribute
 
-            strSQL = " UPDATE " & W_CIPL_D & "  Set DETAILSEQNO = ADJUSTDETAILSEQNO "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
+                Else        ''상품마스터 검색
 
-            strSQL = " ALTER TABLE " & W_CIPL_D & " DROP COLUMN ADJUSTDETAILSEQNO "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
+                    Dim DataCount As Integer = 0
+                    Dim Message As String = ""
+                    strSQL = " Select INVOICENO,PARTNO FROM " & W_CIPL_H & " HD "
+                    strSQL &= " INNER JOIN " & W_CIPL_D & " DD On HD.SEQNO = DD.SEQNO "
+                    strSQL &= " WHERE PARTNO Not In (Select PARTNO FROM M_ITEM)"
+                    cmd = New SqlCommand(strSQL, dbConn)
+                    dr = cmd.ExecuteReader
+                    While dr.Read
+                        DataCount = DataCount + 1
+                        Message &= dr("INVOICENO") & "-" & dr("PARTNO") & vbCrLf
+                    End While
+                    dr.Dispose()
+                    cmd.Dispose()
+                    WriteLog(strSQL, W)
 
-            strSQL = " UPDATE W_CIPL_D "
-            strSQL &= " Set W_CIPL_D.RANNUMBER = RANTABLE.RANNUMBER   "
-            strSQL &= "  FROM W_CIPL_D INNER JOIN (   "
-            strSQL &= " Select  "
-            strSQL &= "  RIGHT('000' + CONVERT(NVARCHAR,DENSE_RANK() OVER (  PARTITION BY SEQNO,SORT ORDER BY SEQNO,SORT,CONVENTIONCODE ,DETAILSEQNO_RANK,HSCODE ASC) ),3) AS RANNUMBER      "
-            strSQL &= " ,* FROM (   "
-            strSQL &= " SELECT    "
-            strSQL &= " SEQNO   "
-            strSQL &= " ,DETAILSEQNO  "
-            strSQL &= " ,( Select MIN(WD2.ORIGINALDETAILSEQNO) FROM W_CIPL_D WD2 WHERE WD2.SEQNO = WD.SEQNO And WD2.CONVENTIONCODE=WD.CONVENTIONCODE And WD.HSCODE=WD2.HSCODE ) As DETAILSEQNO_RANK "
-            strSQL &= " ,Case CONVENTIONCODE When '한-중 FTA' THEN '0' WHEN 'APTA' THEN '1' WHEN '해당없음' THEN '2' END AS CONVENTIONCODE  "
-            strSQL &= " ,PRODUCT   "
-            strSQL &= " ,HSCODE    "
-            strSQL &= " ,PARTNO   "
-            strSQL &= " ,Case REPLACE(PRODUCT,'(주)','') WHEN  '현대케피코' THEN '1' ELSE '0' END SORT   "
-            strSQL &= " FROM W_CIPL_D WD ) A   "
-            strSQL &= " ) As RANTABLE   "
-            strSQL &= " On W_CIPL_D.SEQNO = RANTABLE.SEQNO And W_CIPL_D.DETAILSEQNO = RANTABLE.DETAILSEQNO  "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
+                    If DataCount <> 0 Then
+                        'MsgBoxFail("아래의 데이타가 상품마스타에 존재하지 않습니다." & vbCrLf & Message)
+                        addlog("아래의 데이타가 상품마스타에 존재하지 않습니다." & vbCrLf & Message, 2)
+                        Return False
+                        Exit Function
+                    End If
 
-            strSQL = " UPDATE W_CIPL_D "
-            strSQL &= " Set W_CIPL_D.RANDETAILNUMBER = RIGHT('00'+CONVERT(NVARCHAR,RANTABLE.ORIGINALDETAILSEQNO),2)   "
-            'strSQL &= " Set W_CIPL_D.ORIGINALDETAILSEQNO = RANTABLE.ORIGINALDETAILSEQNO   "
-            strSQL &= "  FROM W_CIPL_D INNER JOIN (   "
-            strSQL &= " Select  "
-            strSQL &= " RIGHT('000' + CONVERT(NVARCHAR,RANK() OVER (PARTITION BY SEQNO,SORT,CONVENTIONCODE,HSCODE ORDER BY PRODUCT,PARTNO ASC) ),3) AS ORIGINALDETAILSEQNO        "
-            strSQL &= " ,* FROM (   "
-            strSQL &= " SELECT    "
-            strSQL &= " SEQNO   "
-            strSQL &= " ,DETAILSEQNO  "
-            strSQL &= " ,( SELECT MIN(WD2.ORIGINALDETAILSEQNO) FROM W_CIPL_D WD2 WHERE WD2.SEQNO = WD.SEQNO AND WD2.CONVENTIONCODE=WD.CONVENTIONCODE AND WD.HSCODE=WD2.HSCODE ) AS DETAILSEQNO_RANK "
-            strSQL &= " ,Case CONVENTIONCODE When '한-중 FTA' THEN '0' WHEN 'APTA' THEN '1' WHEN '해당없음' THEN '2' END AS CONVENTIONCODE  "
-            strSQL &= " ,PRODUCT   "
-            strSQL &= " ,HSCODE    "
-            strSQL &= " ,PARTNO   "
-            strSQL &= " ,Case REPLACE(PRODUCT,'(주)','') WHEN  '현대케피코' THEN '1' ELSE '0' END SORT   "
-            strSQL &= " FROM W_CIPL_D WD ) A   "
-            strSQL &= " ) As RANTABLE   "
-            strSQL &= " On W_CIPL_D.SEQNO = RANTABLE.SEQNO And W_CIPL_D.DETAILSEQNO = RANTABLE.DETAILSEQNO  "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            Dim DataCount As Integer = 0
-            Dim Message As String = ""
-            strSQL = " Select INVOICENO,PARTNO FROM " & W_CIPL_H & " HD "
-            strSQL &= " INNER JOIN " & W_CIPL_D & " DD On HD.SEQNO = DD.SEQNO "
-            strSQL &= " WHERE PARTNO Not In (Select PARTNO FROM M_ITEM)"
-            cmd = New SqlCommand(strSQL, dbConn)
-            dr = cmd.ExecuteReader
-            While dr.Read
-                DataCount = DataCount + 1
-                Message &= dr("INVOICENO") & "-" & dr("PARTNO") & vbCrLf
+                End If
+                ProcessCount = ProcessCount + 1
             End While
-            dr.Dispose()
-            cmd.Dispose()
+            ''2018/03/15
 
-            If DataCount <> 0 Then
-                MsgBoxFail("아래의 데이타가 상품마스타에 존재하지 않습니다." & vbCrLf & Message)
-                addlog("아래의 데이타가 상품마스타에 존재하지 않습니다." & vbCrLf & Message, 2)
-                Return False
-                Exit Function
-            Else
+            addlog(filepath & " 를 임포트 했습니다.", 3)
 
-            End If
-            ''안분처리
+            'addlog("임포트를 성공했습니다. (" & filecount & "건 )", 3)
+            'MsgBoxOK("임포트를 성공했습니다. ")
 
-            ''안분처리
-            strSQL = " UPDATE W_CIPL_D Set "
-            strSQL &= " W_CIPL_D.PARTNAME = M_ITEM.PARTNAME "
-            strSQL &= " FROM M_ITEM INNER JOIN W_CIPL_D "
-            strSQL &= " On M_ITEM.PARTNO = W_CIPL_D.PARTNO "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-
-            cmd = New SqlCommand(" UPDATE  " & W_CIPL_H & " Set PL_TOTAL_NWEIGHT_PLTS = Case When PL_TOTAL_NWEIGHT <50 Then 0 Else PL_TOTAL_NWEIGHT_PLTS End ", dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            cmd = New SqlCommand(" UPDATE  " & W_CIPL_H & " Set SEQNO= (Select ISNULL(MAX(SEQNO),0) As MAXROW FROM " & D_CIPL_H & ") + SEQNO ", dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            cmd = New SqlCommand(" UPDATE  " & W_CIPL_D & " Set SEQNO = (Select ISNULL(MAX(SEQNO),0) As MAXROW FROM " & D_CIPL_D & ") + SEQNO ", dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            cmd = New SqlCommand(" INSERT INTO " & D_CIPL_H & " Select * FROM " & W_CIPL_H, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            cmd = New SqlCommand(" INSERT INTO " & D_CIPL_D & " Select * FROM " & W_CIPL_D, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            addlog("임포트를 성공했습니다. (" & filecount & "건 )", 3)
-            MsgBoxOK("임포트를 성공했습니다. ")
             Return True
         Catch ex As Exception
             addlog("임포트를 실패했습니다. ", 2)

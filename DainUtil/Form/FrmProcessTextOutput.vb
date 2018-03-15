@@ -82,7 +82,7 @@ Public Class FrmProcessTextOutput
         Dim DataCount As Integer = 0
 
         Try
-
+            WriteLog("파일출력", N)
             Dim files As String()
             files = System.IO.Directory.GetFiles(G_TextoutPath, "*.*", System.IO.SearchOption.TopDirectoryOnly)
             For i As Integer = 0 To files.Length - 1
@@ -104,11 +104,11 @@ Public Class FrmProcessTextOutput
                 For l As Integer = 0 To 1
 
                     ''데이터 존재 체크
-                    strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/CUSDEC830A1")
+                    strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/OUTPUT/CUSDEC830A1")
                     strSQL &= gWhere
                     strSQL &= " AND HD.SEQNO = '" & SeqNoTable.Rows(i)("SEQNO") & "'"
                     If l = 0 Then
-                        strSQL &= " AND DD.PRODUCT NOT LIKE '%케피코%' "
+                        strSQL &= " AND DD.PRODUCT  LIKE '%케피코%' "
 
                     Else
                         strSQL &= " AND DD.PRODUCT NOT LIKE '%케피코%' "
@@ -144,24 +144,24 @@ Public Class FrmProcessTextOutput
                         Select Case k
                             Case 1
                                 'CUSDEC830B1
-                                strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/CUSDEC830B1")
+                                strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/OUTPUT/CUSDEC830B1")
                             Case 2
                                 'CUSDEC830B5 - 보고 안함
                                 'strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/CUSDEC830B5")
                                 strSQL = ""
                             Case 3
                                 'CUSDEC830C1
-                                strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/CUSDEC830C1")
+                                strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/OUTPUT/CUSDEC830C1")
                             Case 4
                                 'CUSDEC830D1
-                                strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/CUSDEC830D1")
+                                strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/OUTPUT/CUSDEC830D1")
                             Case 5
                                 'CUSDEC830D2 - 보고안함
                                 'strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/CUSDEC830D2")
                                 strSQL = ""
                             Case Else
                                 'CUSDEC830A1'
-                                strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/CUSDEC830A1")
+                                strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/OUTPUT/CUSDEC830A1")
                         End Select
 
                         If strSQL <> "" Then
@@ -177,16 +177,19 @@ Public Class FrmProcessTextOutput
                             Select Case k
                                 Case 1
                                     If OUTPUTFILENAME.Contains("-1.txt") = False Then
-                                        strSQL = strSQL.Replace("%2", " HD.PACKINGLISTNO ")
+                                        strSQL = strSQL.Replace("%1", " HD.PACKINGLISTNO ")
                                     Else
-                                        strSQL = strSQL.Replace("%2", " HD.PACKINGLISTNO + '-1' ")
+                                        strSQL = strSQL.Replace("%1", " HD.PACKINGLISTNO + '-1' ")
                                     End If
 
-                                Case 2
-                                Case 3
-                                Case 4
-                                Case 5
-
+                                    If l = 0 Then
+                                        strSQL = strSQL.Replace("%2", " AND DD2.PRODUCT LIKE '%케피코%' ")
+                                        strSQL = strSQL.Replace("%3", " AND DD3.PRODUCT LIKE '%케피코%' ")
+                                    Else
+                                        strSQL = strSQL.Replace("%2", " AND DD2.PRODUCT NOT LIKE '%케피코%' ")
+                                        strSQL = strSQL.Replace("%3", " AND DD3.PRODUCT NOT LIKE '%케피코%' ")
+                                    End If
+                                Case 2, 3, 4, 5
                                 Case Else
                                     If l = 0 Then
                                         strSQL = strSQL.Replace("%1", " AND DD2.PRODUCT LIKE '%케피코%' ")
@@ -194,8 +197,11 @@ Public Class FrmProcessTextOutput
                                         strSQL = strSQL.Replace("%1", " AND DD2.PRODUCT NOT LIKE '%케피코%' ")
                                     End If
                             End Select
-                            strSQL &= " ORDER BY HD.SEQNO,DD.SEQNO"
 
+
+
+                            strSQL &= " ORDER BY HD.SEQNO,DD.SEQNO"
+                            WriteLog(strSQL, W)
                             cmd = New SqlCommand(strSQL, dbConn)
                             dr = cmd.ExecuteReader
                             While dr.Read()
@@ -268,35 +274,41 @@ Public Class FrmProcessTextOutput
             Select Case type
                 Case 0      '검증
                     txtLog.Text = txtLog.Text & vbCrLf & "[검증]" & log
-                Case 1      '추가
+                    WriteLog(log, W)
+                Case 1      '추가`
                     If ProgressBar1.Value + 1 <= ProgressBar1.Maximum Then
                         ProgressBar1.Value = ProgressBar1.Value + 1
                     End If
-                    txtLog.Text = txtLog.Text & vbCrLf & "[추가]" & log
                     lblPercent.Text = CInt(ProgressBar1.Value / ProgressBar1.Maximum * 100).ToString & "%"
+                    txtLog.Text = txtLog.Text & vbCrLf & "[추가]" & log
+                    WriteLog(log, S)
                 Case 2     '실패
                     txtLog.Text = txtLog.Text & vbCrLf & "[실패]" & log
+                    WriteLog(log, E)
                 Case 3     '알림
                     txtLog.Text = txtLog.Text & vbCrLf & "[알림]" & log
+                    WriteLog(log, N)
             End Select
 
         Else
             Select Case type
                 Case 0      '검증
                     txtLog.Text = "[검증]" & log
+                    WriteLog(log, W)
                 Case 1      '추가
                     If ProgressBar1.Value + 1 <= ProgressBar1.Maximum Then
                         ProgressBar1.Value = ProgressBar1.Value + 1
                     End If
-                    txtLog.Text = "[추가]" & log
                     lblPercent.Text = CInt(ProgressBar1.Value / ProgressBar1.Maximum * 100).ToString & "%"
+                    txtLog.Text = "[추가]" & log
+                    WriteLog(log, N)
                 Case 2     '실패
                     txtLog.Text = "[실패]" & log
+                    WriteLog(log, E)
                 Case 3     '알림
                     txtLog.Text = "[알림]" & log
+                    WriteLog(log, N)
             End Select
-
-
         End If
         txtLog.SelectionStart = txtLog.Text.Length
         txtLog.Focus()

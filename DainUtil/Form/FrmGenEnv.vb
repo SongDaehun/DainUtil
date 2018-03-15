@@ -16,10 +16,10 @@ Public Class FrmGenEnv
             strSQL += "DATAKEEPDAYS = " + ColumnSet(txtDataKeepDays.Value)
             G_DATAKEEPDAYS = txtDataKeepDays.Value
             If ChkFileOutFlag.Checked Then
-                strSQL += "FILEOUTFLAG = " + ColumnSet("1")
+                strSQL += ",FILEOUTFLAG = " + ColumnSet("1")
                 G_FILEOUTFLAG = True
             Else
-                strSQL += "FILEOUTFLAG = " + ColumnSet("0")
+                strSQL += ",FILEOUTFLAG = " + ColumnSet("0")
                 G_FILEOUTFLAG = False
             End If
             strSQL += ",REPORTCODE = " + ColumnSet(txtReporterCode.Text)
@@ -41,6 +41,8 @@ Public Class FrmGenEnv
             strSQL += ",SHIPPERSEXPORTELSECUSTOMSCODE = " + ColumnSet(txtSHIPPERSEXPORTELSECUSTOMSCODE.Text)
 
             cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
             MsgBoxOK("환경설정이 갱신되었습니다. ")
             Me.Close()
         Catch ex As Exception

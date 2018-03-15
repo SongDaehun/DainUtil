@@ -119,46 +119,57 @@ Public Class FrmProcessItemExport
             WorksheetCIPL.Cells(1, 1).Value = "Commercial Invoice & Packing List"
             DirectCast(WorksheetCIPL.Range("A1:A1"), Excel.Range).HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter
 
-            WorksheetCIPL.Range("A1:M1").Merge()
-            WorksheetCIPL.Range("A1:M1").Font.Size = 20
+            WorksheetCIPL.Range("A1:P1").Merge()
+            WorksheetCIPL.Range("A1:P1").Font.Size = 20
 
-            WorksheetCIPL.Cells(3, 1).Value = "NO"
+            WorksheetCIPL.Cells(3, 1).Value = "INVOICE NO"
             WorksheetCIPL.Range("A3:A4").Merge()
 
-            WorksheetCIPL.Cells(3, 2).Value = "PART NO"
+            WorksheetCIPL.Cells(3, 2).Value = "란번호"
             WorksheetCIPL.Range("B3:B4").Merge()
 
-            WorksheetCIPL.Cells(3, 3).Value = "PART NAME"
+            WorksheetCIPL.Cells(3, 3).Value = "행번호"
             WorksheetCIPL.Range("C3:C4").Merge()
 
-            WorksheetCIPL.Cells(3, 4).Value = "TOTAL"
-            WorksheetCIPL.Cells(4, 4).Value = "Q'TY"
+            WorksheetCIPL.Cells(3, 4).Value = "NO"
+            WorksheetCIPL.Range("D3:D4").Merge()
 
-            WorksheetCIPL.Cells(3, 5).Value = "P/Un"
+            WorksheetCIPL.Cells(3, 5).Value = "PART NO"
             WorksheetCIPL.Range("E3:E4").Merge()
 
-            WorksheetCIPL.Cells(3, 6).Value = "U/PRICE"
-            WorksheetCIPL.Cells(4, 6).Value = "(USD)"
+            WorksheetCIPL.Cells(3, 6).Value = "PART NAME"
+            WorksheetCIPL.Range("F3:F4").Merge()
 
-            WorksheetCIPL.Cells(3, 7).Value = "AMOUNT"
-            WorksheetCIPL.Cells(4, 7).Value = "(USD)"
+            WorksheetCIPL.Cells(3, 7).Value = "TOTAL"
+            WorksheetCIPL.Cells(4, 7).Value = "Q'TY"
 
-            WorksheetCIPL.Cells(3, 8).Value = "N/WEIGHT"
-            WorksheetCIPL.Cells(3, 8).Value = "(USD)"
+            WorksheetCIPL.Cells(3, 8).Value = "P/Un"
+            WorksheetCIPL.Range("H3:H4").Merge()
 
-            WorksheetCIPL.Cells(3, 9).Value = "G/WEIGHT"
+            WorksheetCIPL.Cells(3, 9).Value = "U/PRICE"
             WorksheetCIPL.Cells(4, 9).Value = "(USD)"
 
-            WorksheetCIPL.Cells(4, 10).Value = "포장개수"
-            WorksheetCIPL.Cells(4, 11).Value = "신고세번"
-            WorksheetCIPL.Cells(4, 12).Value = "제조사"
-            WorksheetCIPL.Cells(4, 13).Value = "협정"
+            WorksheetCIPL.Cells(3, 10).Value = "AMOUNT"
+            WorksheetCIPL.Cells(4, 10).Value = "(USD)"
 
-            WorksheetCIPL.Range("A1:M4").Interior.ColorIndex = 35
+            WorksheetCIPL.Cells(3, 11).Value = "N/WEIGHT"
+            WorksheetCIPL.Cells(3, 11).Value = "(USD)"
+
+            WorksheetCIPL.Cells(3, 12).Value = "G/WEIGHT"
+            WorksheetCIPL.Cells(4, 12).Value = "(USD)"
+
+            WorksheetCIPL.Cells(4, 13).Value = "포장개수"
+            WorksheetCIPL.Cells(4, 14).Value = "신고세번"
+            WorksheetCIPL.Cells(4, 15).Value = "제조사"
+            WorksheetCIPL.Cells(4, 16).Value = "협정"
+
+            WorksheetCIPL.Range("A1:P4").Interior.ColorIndex = 35
 
             strSQL = " SELECT * FROM ("
             strSQL &= "  Select "
             strSQL &= " HD.INVOICENO As INVOICENO "
+            strSQL &= " ,DD.RANNUMBER As RANNUMBER "
+            strSQL &= " ,DD.RANDETAILNUMBER As RANDETAILNUMBER "
             strSQL &= " ,DD.DETAILSEQNO As DETAILSEQNO "
             strSQL &= " ,DD.PARTNO As PARTNO "
             strSQL &= " ,DD.PARTNAME As PARTNAME "
@@ -192,19 +203,23 @@ Public Class FrmProcessItemExport
                     End If
                 End If
 
-                WorksheetCIPL.Cells(RowNumber, 1).Value = dr("DETAILSEQNO")
-                WorksheetCIPL.Cells(RowNumber, 2).Value = dr("PARTNO")
-                WorksheetCIPL.Cells(RowNumber, 3).Value = dr("PARTNAME")
-                WorksheetCIPL.Cells(RowNumber, 4).Value = dr("PL_QTY")
-                WorksheetCIPL.Cells(RowNumber, 5).Value = dr("PL_PUN")
-                WorksheetCIPL.Cells(RowNumber, 6).Value = dr("CI_UPRICE_USD")
-                WorksheetCIPL.Cells(RowNumber, 7).Value = dr("CI_AMOUNT_USD")
-                WorksheetCIPL.Cells(RowNumber, 8).Value = dr("PL_NWEIGHTKGS")
-                WorksheetCIPL.Cells(RowNumber, 9).Value = dr("PL_GWEIGHTKGS")
-                WorksheetCIPL.Cells(RowNumber, 10).Value = dr("PACKAGEAMOUNT")
-                WorksheetCIPL.Cells(RowNumber, 11).Value = dr("HSCODE")
-                WorksheetCIPL.Cells(RowNumber, 12).Value = dr("PRODUCT")
-                WorksheetCIPL.Cells(RowNumber, 13).Value = dr("CONVENTIONCODE")
+                WorksheetCIPL.Cells(RowNumber, 1).Value = dr("INVOICENO")
+                WorksheetCIPL.Cells(RowNumber, 2).Value = dr("RANNUMBER")
+                WorksheetCIPL.Cells(RowNumber, 3).Value = dr("RANDETAILNUMBER")
+
+                WorksheetCIPL.Cells(RowNumber, 4).Value = dr("DETAILSEQNO")
+                WorksheetCIPL.Cells(RowNumber, 5).Value = dr("PARTNO")
+                WorksheetCIPL.Cells(RowNumber, 6).Value = dr("PARTNAME")
+                WorksheetCIPL.Cells(RowNumber, 7).Value = dr("PL_QTY")
+                WorksheetCIPL.Cells(RowNumber, 8).Value = dr("PL_PUN")
+                WorksheetCIPL.Cells(RowNumber, 9).Value = dr("CI_UPRICE_USD")
+                WorksheetCIPL.Cells(RowNumber, 10).Value = dr("CI_AMOUNT_USD")
+                WorksheetCIPL.Cells(RowNumber, 11).Value = dr("PL_NWEIGHTKGS")
+                WorksheetCIPL.Cells(RowNumber, 12).Value = dr("PL_GWEIGHTKGS")
+                WorksheetCIPL.Cells(RowNumber, 13).Value = dr("PACKAGEAMOUNT")
+                WorksheetCIPL.Cells(RowNumber, 14).Value = dr("HSCODE")
+                WorksheetCIPL.Cells(RowNumber, 15).Value = dr("PRODUCT")
+                WorksheetCIPL.Cells(RowNumber, 16).Value = dr("CONVENTIONCODE")
 
                 RowNumber = RowNumber + 1
 
@@ -220,10 +235,10 @@ Public Class FrmProcessItemExport
 
                 DirectCast(WorksheetCIPL.Range("A" & StartRowNumber & ":A" & RowNumber.ToString), Excel.Range).HorizontalAlignment _
                  = Excel.XlHAlign.xlHAlignCenter
-                WorksheetCIPL.Cells(RowNumber, 7).Value = "=SUM(G" & StartRowNumber & ":G" & (RowNumber - 1).ToString & ")"
-                WorksheetCIPL.Cells(RowNumber, 8).Value = "=SUM(H" & StartRowNumber & ":H" & (RowNumber - 1).ToString & ")"
-                WorksheetCIPL.Cells(RowNumber, 9).Value = "=SUM(I" & StartRowNumber & ":I" & (RowNumber - 1).ToString & ")"
-                WorksheetCIPL.Cells(RowNumber, 10).Value = "=SUM(J" & StartRowNumber & ":J" & (RowNumber - 1).ToString & ")"
+                WorksheetCIPL.Cells(RowNumber, 10).Value = "=SUM(G" & StartRowNumber & ":G" & (RowNumber - 1).ToString & ")"
+                WorksheetCIPL.Cells(RowNumber, 11).Value = "=SUM(H" & StartRowNumber & ":H" & (RowNumber - 1).ToString & ")"
+                WorksheetCIPL.Cells(RowNumber, 12).Value = "=SUM(I" & StartRowNumber & ":I" & (RowNumber - 1).ToString & ")"
+                WorksheetCIPL.Cells(RowNumber, 13).Value = "=SUM(J" & StartRowNumber & ":J" & (RowNumber - 1).ToString & ")"
 
                 RowNumber = RowNumber + 1
                 WorksheetCIPL.Cells(RowNumber, 1).Value = ""
@@ -235,6 +250,8 @@ Public Class FrmProcessItemExport
             strSQL = " SELECT * FROM ("
             strSQL &= "  Select "
             strSQL &= " HD.INVOICENO As INVOICENO "
+            strSQL &= " ,DD.RANNUMBER As RANNUMBER "
+            strSQL &= " ,DD.RANDETAILNUMBER As RANDETAILNUMBER "
             strSQL &= " ,DD.DETAILSEQNO As DETAILSEQNO "
             strSQL &= " ,DD.PARTNO As PARTNO "
             strSQL &= " ,DD.PARTNAME As PARTNAME "
@@ -265,19 +282,23 @@ Public Class FrmProcessItemExport
                     End If
                 End If
 
-                WorksheetCIPL.Cells(RowNumber, 1).Value = dr("DETAILSEQNO")
-                WorksheetCIPL.Cells(RowNumber, 2).Value = dr("PARTNO")
-                WorksheetCIPL.Cells(RowNumber, 3).Value = dr("PARTNAME")
-                WorksheetCIPL.Cells(RowNumber, 4).Value = dr("PL_QTY")
-                WorksheetCIPL.Cells(RowNumber, 5).Value = dr("PL_PUN")
-                WorksheetCIPL.Cells(RowNumber, 6).Value = dr("CI_UPRICE_USD")
-                WorksheetCIPL.Cells(RowNumber, 7).Value = dr("CI_AMOUNT_USD")
-                WorksheetCIPL.Cells(RowNumber, 8).Value = dr("PL_NWEIGHTKGS")
-                WorksheetCIPL.Cells(RowNumber, 9).Value = dr("PL_GWEIGHTKGS")
-                WorksheetCIPL.Cells(RowNumber, 10).Value = dr("PACKAGEAMOUNT")
-                WorksheetCIPL.Cells(RowNumber, 11).Value = dr("HSCODE")
-                WorksheetCIPL.Cells(RowNumber, 12).Value = dr("PRODUCT")
-                WorksheetCIPL.Cells(RowNumber, 13).Value = dr("CONVENTIONCODE")
+                WorksheetCIPL.Cells(RowNumber, 1).Value = dr("INVOICENO")
+                WorksheetCIPL.Cells(RowNumber, 2).Value = dr("RANNUMBER")
+                WorksheetCIPL.Cells(RowNumber, 3).Value = dr("RANDETAILNUMBER")
+
+                WorksheetCIPL.Cells(RowNumber, 4).Value = dr("DETAILSEQNO")
+                WorksheetCIPL.Cells(RowNumber, 5).Value = dr("PARTNO")
+                WorksheetCIPL.Cells(RowNumber, 6).Value = dr("PARTNAME")
+                WorksheetCIPL.Cells(RowNumber, 7).Value = dr("PL_QTY")
+                WorksheetCIPL.Cells(RowNumber, 8).Value = dr("PL_PUN")
+                WorksheetCIPL.Cells(RowNumber, 9).Value = dr("CI_UPRICE_USD")
+                WorksheetCIPL.Cells(RowNumber, 10).Value = dr("CI_AMOUNT_USD")
+                WorksheetCIPL.Cells(RowNumber, 11).Value = dr("PL_NWEIGHTKGS")
+                WorksheetCIPL.Cells(RowNumber, 12).Value = dr("PL_GWEIGHTKGS")
+                WorksheetCIPL.Cells(RowNumber, 13).Value = dr("PACKAGEAMOUNT")
+                WorksheetCIPL.Cells(RowNumber, 14).Value = dr("HSCODE")
+                WorksheetCIPL.Cells(RowNumber, 15).Value = dr("PRODUCT")
+                WorksheetCIPL.Cells(RowNumber, 16).Value = dr("CONVENTIONCODE")
 
                 RowNumber = RowNumber + 1
 
@@ -293,21 +314,21 @@ Public Class FrmProcessItemExport
 
                 DirectCast(WorksheetCIPL.Range("A" & StartRowNumber & ":A" & RowNumber.ToString), Excel.Range).HorizontalAlignment _
                  = Excel.XlHAlign.xlHAlignCenter
-                WorksheetCIPL.Cells(RowNumber, 7).Value = "=SUM(G" & StartRowNumber & ":G" & (RowNumber - 1).ToString & ")"
-                WorksheetCIPL.Cells(RowNumber, 8).Value = "=SUM(H" & StartRowNumber & ":H" & (RowNumber - 1).ToString & ")"
-                WorksheetCIPL.Cells(RowNumber, 9).Value = "=SUM(I" & StartRowNumber & ":I" & (RowNumber - 1).ToString & ")"
-                WorksheetCIPL.Cells(RowNumber, 10).Value = "=SUM(J" & StartRowNumber & ":J" & (RowNumber - 1).ToString & ")"
+                WorksheetCIPL.Cells(RowNumber, 10).Value = "=SUM(G" & StartRowNumber & ":G" & (RowNumber - 1).ToString & ")"
+                WorksheetCIPL.Cells(RowNumber, 11).Value = "=SUM(H" & StartRowNumber & ":H" & (RowNumber - 1).ToString & ")"
+                WorksheetCIPL.Cells(RowNumber, 12).Value = "=SUM(I" & StartRowNumber & ":I" & (RowNumber - 1).ToString & ")"
+                WorksheetCIPL.Cells(RowNumber, 13).Value = "=SUM(J" & StartRowNumber & ":J" & (RowNumber - 1).ToString & ")"
 
             End If
 
 
-            WorksheetCIPL.Cells.Columns("A:M").AutoFit()
-            WorksheetCIPL.Range("A3", "M" & RowNumber.ToString).Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
-            WorksheetCIPL.Range("A3", "M" & RowNumber.ToString).Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
-            WorksheetCIPL.Range("A3", "M" & RowNumber.ToString).Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
-            WorksheetCIPL.Range("A3", "M" & RowNumber.ToString).Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
-            WorksheetCIPL.Range("A3", "M" & RowNumber.ToString).Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlInsideHorizontal).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
-            WorksheetCIPL.Range("A3", "M" & RowNumber.ToString).Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlInsideVertical).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
+            WorksheetCIPL.Cells.Columns("A:P").AutoFit()
+            WorksheetCIPL.Range("A3", "P" & RowNumber.ToString).Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
+            WorksheetCIPL.Range("A3", "P" & RowNumber.ToString).Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
+            WorksheetCIPL.Range("A3", "P" & RowNumber.ToString).Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
+            WorksheetCIPL.Range("A3", "P" & RowNumber.ToString).Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
+            WorksheetCIPL.Range("A3", "P" & RowNumber.ToString).Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlInsideHorizontal).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
+            WorksheetCIPL.Range("A3", "P" & RowNumber.ToString).Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlInsideVertical).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
 
             Workbook.SaveAs(FilePath, Microsoft.Office.Interop.Excel.XlFileFormat.xlExcel8)
 
