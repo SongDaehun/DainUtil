@@ -905,11 +905,226 @@ Public Class FrmProcessExcelImport
     End Function
 
     Private Function ImportKVPO_CI_Check(ByVal filepath As String) As Boolean
-
+        Try
+            Return True
+        Catch ex As Exception
+            Return False
+        End Try
     End Function
 
     Private Function ImportKVPO_CI(ByVal filepath As String) As Boolean
 
+        If ImportKVPO_CI_Check(filepath) = False Then Return False
+
+        Dim ImportFile As String = ""
+        Dim Excel As Excel.Application = New Excel.Application
+        Dim Workbook As Excel.Workbook
+        Dim WorksheetCI As Excel.Worksheet
+        Dim WorksheetPL As Excel.Worksheet
+        Dim INVOICENO As String = ""
+        ''안분로직
+        Dim WorksheetSinge As Excel.Worksheet
+        Dim RangeSingle As Excel.Range
+        Dim NOT_Ajusted_SingleTotalPallet As Double = 0
+        Dim Ajust_DetailSeqno As String
+        Dim SingleTotalPallet As Integer
+        Dim TotalPallet As Integer = 0
+        Dim WS_RowNumber As Integer = 0
+        ''안분로직
+        Dim RowNumber As Integer = 0
+
+        Dim InvoiceDate As DateTime
+
+        Dim ImportSuccess As Integer = 0
+
+        'Excel RowNumber
+        Dim eRowNumber As Integer = 0
+
+        Dim strSQL As String
+
+        Dim cmd As SqlCommand
+        Dim dr As SqlDataReader
+        Dim Existflag As Boolean = False
+
+        Dim detailCount_adjust As Integer = 0
+        Dim ItemCount As Integer = 0
+        Dim InvoiceNumber As String = ""
+        Dim Loading_Port_Code As String = ""
+
+        Try
+            strSQL = "DELETE FROM W_CIPL_H "
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+            WriteLog(strSQL, W)
+
+            strSQL = "DELETE FROM W_CIPL_D "
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+            WriteLog(strSQL, W)
+
+            strSQL = "DELETE FROM W_SINGLETABLE "
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+            WriteLog(strSQL, W)
+
+            Excel = New Excel.Application
+            Workbook = Excel.Workbooks.Open(filepath)
+
+            For j = 1 To Workbook.Worksheets.Count
+                If Workbook.Worksheets(j).Name.ToString.Contains("INVOICE") Then
+
+                    RowNumber = RowNumber + 1
+
+                    strSQL = "INSERT INTO " & W_CIPL_H & " VALUES("
+                    strSQL &= ColumnSet(RowNumber)
+                    ',INVOICENO NVARCHAR(20)
+                    strSQL &= " , " & ColumnSet(WorksheetCI.Cells(3, 5).Value)
+                    INVOICENO = WorksheetCI.Cells(3, 5).Value
+                    ',PACKINGLISTNO NVARCHAR(20)
+                    strSQL &= ", " & ColumnSet(WorksheetCI.Cells(4, 5).Value)
+                    ',INVOICEDATE NVARCHAR(8)
+                    If DateTime.TryParse(WorksheetCI.Cells(5, 5).Value, InvoiceDate) Then
+                        InvoiceDate = WorksheetCI.Cells(5, 5).Value
+                        strSQL &= ", " & ColumnSet(InvoiceDate.ToString("yyyyMMdd"))
+                    Else
+                        strSQL &= " ,'' "
+                    End If
+
+                    'DECLARERATIONNUMBER
+                    If (WorksheetCI.Cells(3, 1).Value & WorksheetCI.Cells(3, 2).Value & WorksheetCI.Cells(3, 3).Value).ToString.ToUpper.Contains("KEFICO") Then
+                        strSQL &= " ,'0001'"
+                    Else
+                        strSQL &= " ,'0002'"
+                    End If
+
+                    ',SHIPPEREXPORTER NVARCHAR(100)
+                    strSQL &= " ," & ColumnSet(WorksheetCI.Cells(3, 1).Value & WorksheetCI.Cells(3, 2).Value & WorksheetCI.Cells(3, 3).Value)
+
+                    ',SHIPPEREXPORTERADDRESS NVARCHAR(255)
+                    strSQL &= " ,'" & WorksheetCI.Cells(4, 1).Value & WorksheetCI.Cells(4, 2).Value & WorksheetCI.Cells(4, 3).Value & vbCrLf &
+                            WorksheetCI.Cells(5, 1).Value & WorksheetCI.Cells(5, 2).Value & WorksheetCI.Cells(5, 3).Value & vbCrLf &
+                        WorksheetCI.Cells(6, 1).Value & WorksheetCI.Cells(6, 2).Value & WorksheetCI.Cells(6, 3).Value & "'"
+
+                    ',CONSIGNEE NVARCHAR(100)
+                    strSQL &= " ," & ColumnSet(WorksheetCI.Cells(8, 1).Value & WorksheetCI.Cells(8, 2).Value & WorksheetCI.Cells(8, 3).Value)
+                    ',CONSIGNEEADDRESS NVARCHAR(255)
+                    strSQL &= " ,'" & ColumnSetLine(WorksheetCI.Cells(9, 1).Value &
+                          WorksheetCI.Cells(9, 2).Value &
+                            WorksheetCI.Cells(9, 3).Value) &
+                            ColumnSetLine(WorksheetCI.Cells(10, 1).Value &
+                            WorksheetCI.Cells(10, 2).Value &
+                            WorksheetCI.Cells(10, 3).Value) &
+                            ColumnSetLine(WorksheetCI.Cells(11, 1).Value &
+                            WorksheetCI.Cells(11, 2).Value &
+                            WorksheetCI.Cells(11, 3).Value) &
+                            ColumnSetLine(WorksheetCI.Cells(12, 1).Value &
+                            WorksheetCI.Cells(12, 2).Value &
+                            WorksheetCI.Cells(12, 3).Value) &
+                            ColumnSetLine(WorksheetCI.Cells(13, 1).Value &
+                            WorksheetCI.Cells(13, 2).Value &
+                            WorksheetCI.Cells(13, 3).Value) & "'"
+
+                    ',TERMSOFDELIVERY NVARCHAR(10)
+                    strSQL &= " ," & ColumnSet(WorksheetCI.Cells(8, 4).Value.ToString.ToUpper.Replace(" ", "").Replace("TERMSOFDELIVERY", "").Replace(":", ""))
+                    ',SHIPPINGMODE NVARCHAR(30)
+                    strSQL &= " ," & ColumnSet(WorksheetCI.Cells(9, 4).Value.ToString.ToUpper.Replace(" ", "").Replace("SHIPPINGMODE", "").Replace(":", ""))
+                    ',PAYMENT NVARCHAR(30)
+                    strSQL &= " ," & ColumnSet(WorksheetCI.Cells(10, 4).Value.ToString.ToUpper.Replace(" ", "").Replace("PAYMENT", "").Replace(":", ""))
+                    ',PAYMENTBANK NVARCHAR(30)
+                    strSQL &= " ," & ColumnSet(WorksheetCI.Cells(11, 4).Value.ToString.ToUpper.Replace(" ", "").Replace("PAYMENTBANK", "").Replace(":", ""))
+                    'ACCOUNTNO NVARCHAR(30)
+                    strSQL &= " ," & ColumnSet(WorksheetCI.Cells(12, 4).Value.ToString.ToUpper.Replace(" ", "").Replace("ACCOUNTNO.", "").Replace(":", ""))
+                    'PURCHASEORDER NVARCHAR(30)                 ---뭐가 들어가는지 잘 모르겠음
+                    strSQL &= " ," & ColumnSet(WorksheetCI.Cells(13, 6).Value.ToString.Replace(" ", "").Replace("PURCHASEORDER", "").Replace(":", ""))
+                    'LOADINGPORTCODE NVARCHAR(100)
+
+                    cmd = New SqlCommand("SELECT top 1 ISNULL(CONTENTSCODE,'') FROM M_CUSTOMCODESET WHERE CODEDIV = 'LOADING PORT'  AND CONTENTS LIKE '%" & WorksheetCI.Cells(15, 4).Value.ToString.ToUpper.Contains("AIRPORT") & "%'", dbConn)
+                    dr = cmd.ExecuteReader
+                    If dr.HasRows Then
+                        dr.Read()
+                        Loading_Port_Code = dr("CONTENTSCODE")
+                    End If
+                    dr.Close()
+                    cmd.Dispose()
+
+                    'LOADINGPORTNAME NVARCHAR(100)
+                    strSQL &= " ,'" & Loading_Port_Code & "'"
+                    strSQL &= " ," & ColumnSet(WorksheetCI.Cells(14, 3).Value & WorksheetCI.Cells(15, 3).Value)
+                    'DESTINATION NVARCHAR(100)
+                    strSQL &= " ," & ColumnSet(WorksheetCI.Cells(16, 3).Value & WorksheetCI.Cells(17, 3).Value)
+                    'NOTIFY NVARCHAR(255)
+                    strSQL &= " ,'" & ColumnSetLine(WorksheetCI.Cells(14, 4).Value &
+                            WorksheetCI.Cells(14, 5).Value &
+                            WorksheetCI.Cells(14, 6).Value &
+                            WorksheetCI.Cells(14, 7).Value &
+                            WorksheetCI.Cells(14, 8).Value &
+                            WorksheetCI.Cells(14, 9).Value &
+                            WorksheetCI.Cells(14, 10).Value) &
+                        ColumnSetLine(WorksheetCI.Cells(15, 4).Value &
+                        WorksheetCI.Cells(15, 5).Value &
+                        WorksheetCI.Cells(15, 6).Value &
+                        WorksheetCI.Cells(15, 7).Value &
+                        WorksheetCI.Cells(15, 8).Value &
+                        WorksheetCI.Cells(15, 9).Value &
+                        WorksheetCI.Cells(15, 10).Value) &
+                          ColumnSetLine(WorksheetCI.Cells(16, 4).Value &
+                        WorksheetCI.Cells(16, 5).Value &
+                        WorksheetCI.Cells(16, 6).Value &
+                        WorksheetCI.Cells(16, 7).Value &
+                        WorksheetCI.Cells(16, 8).Value &
+                        WorksheetCI.Cells(16, 9).Value &
+                        WorksheetCI.Cells(16, 10).Value) &
+                         ColumnSet(WorksheetCI.Cells(17, 4).Value &
+                        WorksheetCI.Cells(17, 5).Value &
+                        WorksheetCI.Cells(17, 6).Value &
+                        WorksheetCI.Cells(17, 7).Value &
+                        WorksheetCI.Cells(17, 8).Value &
+                        WorksheetCI.Cells(17, 9).Value &
+                        WorksheetCI.Cells(17, 10).Value) & "'"
+
+                    'PICKING LIST START
+                    'PL_CONTACTPERSON NVARCHAR(255)   ---뭐가 들어가는지 잘 모르겠음
+                    strSQL &= "," & ColumnSet(WorksheetPL.Cells(19, 6).Value & WorksheetPL.Cells(19, 7).Value & WorksheetPL.Cells(19, 8).Value & WorksheetPL.Cells(19, 9).Value)
+                    'PL_CONTACTPERSON_EMAIL NVARCHAR(255)     ---뭐가 들어가는지 잘 모르겠음
+                    strSQL &= "," & ColumnSet(WorksheetPL.Cells(20, 6).Value)
+                    'PL_ETD NVARCHAR(8)
+                    strSQL &= " ," & ColumnSet(CDate(WorksheetPL.Cells(16, 3).Value).ToString("yyyyMMdd"))
+                    'PL_ETA NVARCHAR(8)
+                    strSQL &= " ," & ColumnSet(CDate(WorksheetPL.Cells(16, 8).Value).ToString("yyyyMMdd"))
+                    'PL_TOTAL_MESURMENT Decimal(14,2)
+                    strSQL &= " ," & ColumnSet(WorksheetPL.Cells(22, 5).Value.ToString.ToUpper.Replace(" ", "").Replace("TOTALMEASURMENT:", "").Replace("CBM", ""))
+                    'PL_TOTAL_NWEIGHT DECIMAL(14,2)
+                    strSQL &= " ," & ColumnSet(WorksheetPL.Cells(22, 6).Value.ToString.ToUpper.Replace(" ", "").Replace("TOTALN/WEIGHT:", "").Replace("KG", ""))
+                    'PL_TOTAL_NWEIGHT_PLTS Decimal(14,0)
+                    strSQL &= " ," & ColumnSet(WorksheetPL.Cells(22, 8).Value.ToString.ToUpper.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("PLTS", ""))
+                    TotalPallet = WorksheetPL.Cells(24, 8).Value.ToString.ToUpper.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("PLTS", "")
+                    'PL_TOTAL_GWEIGHT DECIMAL(14,2)
+                    strSQL &= " ," & ColumnSet(WorksheetPL.Cells(22, 7).Value.ToString.ToUpper.Replace(" ", "").Replace("TOTALG/WEIGHT:", "").Replace("KG", ""))
+
+                    'PICKING LIST END
+                    'IMPORTDATEANDTIME NVARCHAR(14)
+                    strSQL &= ",REPLACE(REPLACE(REPLACE(CONVERT(VARCHAR,GETDATE(),120),' ',''),'-',''),':','')"
+                    'OUTPUTFLAG INT
+                    strSQL &= ",'0'"
+                    'OUTPUTDATEANDTIME NVARCHAR(14)
+                    strSQL &= ",''"
+
+                    strSQL &= ")"
+                    cmd = New SqlCommand(strSQL, dbConn)
+                    cmd.ExecuteNonQuery()
+                    cmd.Dispose()
+                    WriteLog(strSQL, W)
+
+                End If
+            Next
+
+            Return True
+        Catch ex As Exception
+            Return False
+        End Try
     End Function
 
 
