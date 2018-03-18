@@ -158,7 +158,7 @@ Partial Class FrmInvoicePackingPrint
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(349, 247)
+        Me.ClientSize = New System.Drawing.Size(349, 132)
         Me.Controls.Add(Me.btnPrint)
         Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.GroupBox1)

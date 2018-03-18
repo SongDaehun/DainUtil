@@ -8,6 +8,9 @@ Module Globals
     Public G_APPPath As String = Application.StartupPath()
     Public G_ExcelInPath As String = G_APPPath + "\Import\"
     Public G_TextoutPath As String = G_APPPath + "\Export\"
+    Public G_ReportPath As String = G_APPPath + "\Report\"
+    Public G_Image As String = G_APPPath + "\source\image\"
+    Public R_Whare As String = ""
     'Public G_DBPath As String = G_APPPath + "\db\dain.accdb"
 
     Public Const gsXmlSetting As String = "SET.xml"                     '設定ﾌｧｲﾙ(得意先個別)
@@ -39,7 +42,7 @@ Module Globals
     Public R_ITEM As Integer = 901
     Public R_STNDARDMASTER As Integer = 900
     Public R_CUSTOMMASTER As Integer = 902
-    Public R_WHERE As String
+
 
     Public Function GetIPUser() As Boolean
         G_IPUser = ""

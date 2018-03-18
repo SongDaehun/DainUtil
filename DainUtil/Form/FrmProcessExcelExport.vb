@@ -5,13 +5,12 @@ Public Class FrmProcessItemExport
     Dim FilePath As String
     Dim ReportNo As Integer
     Dim DataCount As Integer = 0
-    Public Sub New(ByVal pFilePath As String, ByVal pReportNo As Integer)
+    Public Sub New(ByVal pReportNo As Integer)
 
         ' 디자이너에서 이 호출이 필요합니다.
         InitializeComponent()
-        FilePath = pFilePath
-        ReportNo = pReportNo
         ' InitializeComponent() 호출 뒤에 초기화 코드를 추가하세요.
+        ReportNo = pReportNo
 
     End Sub
     Private Sub FrmProcessItemExport_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -23,9 +22,9 @@ Public Class FrmProcessItemExport
                 Case 0      '검증
                     txtLog.Text = txtLog.Text & vbCrLf & "[검증]" & log
                 Case 1      '추가
-                    If ProgressBar1.Value + 1 <= ProgressBar1.Maximum Then
-                        ProgressBar1.Value = ProgressBar1.Value + 1
-                    End If
+                    'If ProgressBar1.Value + 1 <= ProgressBar1.Maximum Then
+                    '    ProgressBar1.Value = ProgressBar1.Value + 1
+                    'End If
                     txtLog.Text = txtLog.Text & vbCrLf & "[추가]" & log
                     lblPercent.Text = CInt(ProgressBar1.Value / ProgressBar1.Maximum * 100).ToString & "%"
                 Case 2     '실패
@@ -62,6 +61,9 @@ Public Class FrmProcessItemExport
     End Sub
 
     Private Sub FrmProcessItemExport_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
+        Dim Seqno() As String = Nothing
+
         If ReportNo = 0 Then
             Me.Close()
         End If
@@ -71,13 +73,20 @@ Public Class FrmProcessItemExport
 
         Select Case ReportNo
             Case R_CIPL_LIST
-                CIPL_Report()
+                Seqno = R_Whare.Split(","c)
+                ProgressBar1.Maximum = Seqno.Length
+
+                For i As Integer = 0 To Seqno.Length - 1
+                    CIPL_Report(Seqno(i))
+                    ProgressBar1.Value = ProgressBar1.Value + 1
+                    lblPercent.Text = ProgressBar1.Value / ProgressBar1.Maximum * 100
+                Next
             Case R_ITEM
                 ITEM_Report()
         End Select
 
     End Sub
-    Private Sub CIPL_Report()
+    Private Sub CIPL_Report(ByVal seqno As String)
         Dim strSQL As String
         Dim cmd As SqlCommand
         Dim dr As SqlDataReader
@@ -85,32 +94,26 @@ Public Class FrmProcessItemExport
         Dim xExcel As Excel.Application = New Excel.Application
         Dim Workbook As Excel.Workbook
         Dim WorksheetCIPL As Excel.Worksheet
-        Dim i As Integer = 2
-        Dim SeqNO As Integer = 0
-        Dim Sort As Integer = -1
         Dim RowNumber As Integer = 1
         Dim StartRowNumber As Integer
+        Dim INVOICENUMBER As String = ""
+        Dim SORT As String = ""
         Try
 
-            xExcel.DisplayAlerts = False
-
-            strSQL = " SELECT COUNT(*) AS DATACOUNT FROM D_CIPL_H HD INNER JOIN D_CIPL_D DD ON HD.SEQNO = DD.SEQNO WHERE 1 = 1"
-            cmd = New SqlCommand(strSQL, dbConn)
-            dr = cmd.ExecuteReader
-            dr.Read()
-            DataCount = dr("DATACOUNT")
-            dr.Close()
-            cmd.Dispose()
             addlog("인보이스 리스트를 추출하고 있습니다.", 3)
 
-            If DataCount = 0 Then
+            strSQL = XmlReadVal(DirYenFix(G_APPPath) & gsXmlQuery, "root/EXPORT/CI")
+            strSQL = strSQL.Replace("%1", " HD.SEQNO = ( " & seqno & " ) ")
+            cmd = New SqlCommand(strSQL, dbConn)
+            dr = cmd.ExecuteReader
+
+            If dr.HasRows = False Then
                 addlog("출력할 데이터가 없습니다. ", 3)
-                'txtLog.Text = "출력할 데이터가 없습니다. "
                 MsgBoxFail("출력할 데이터가 없습니다.")
                 Exit Sub
             End If
-            ProgressBar1.Maximum = DataCount
 
+            xExcel.DisplayAlerts = False
             xExcel = New Excel.Application
             xExcel.Visible = False
             Workbook = xExcel.Workbooks.Add()
@@ -165,45 +168,37 @@ Public Class FrmProcessItemExport
 
             WorksheetCIPL.Range("A1:P4").Interior.ColorIndex = 35
 
-            strSQL = " SELECT * FROM ("
-            strSQL &= "  Select "
-            strSQL &= " HD.INVOICENO As INVOICENO "
-            strSQL &= " ,DD.RANNUMBER As RANNUMBER "
-            strSQL &= " ,DD.RANDETAILNUMBER As RANDETAILNUMBER "
-            strSQL &= " ,DD.DETAILSEQNO As DETAILSEQNO "
-            strSQL &= " ,DD.PARTNO As PARTNO "
-            strSQL &= " ,DD.PARTNAME As PARTNAME "
-            strSQL &= " ,DD.PL_QTY As PL_QTY "
-            strSQL &= " ,DD.PL_PUN As PL_PUN "
-            strSQL &= " ,DD.CI_UPRICE_USD As CI_UPRICE_USD "
-            strSQL &= " ,DD.CI_AMOUNT_USD As CI_AMOUNT_USD "
-            strSQL &= " ,DD.PL_NWEIGHTKGS As PL_NWEIGHTKGS "
-            strSQL &= " ,DD.PL_GWEIGHTKGS As PL_GWEIGHTKGS "
-            strSQL &= " ,DD.PACKAGEAMOUNT As PACKAGEAMOUNT "
-            strSQL &= " ,DD.HSCODE As HSCODE "
-            strSQL &= " ,MI.PRODUCT As PRODUCT "
-            strSQL &= " ,DD.CONVENTIONCODE As CONVENTIONCODE "
-            strSQL &= " ,Case REPLACE(MI.PRODUCT,'(주)','') WHEN  '현대케피코' THEN '1' ELSE '0' END SORT"
-            strSQL &= " FROM D_CIPL_H HD INNER JOIN D_CIPL_D DD  "
-            strSQL &= " ON HD.SEQNO = DD.SEQNO  "
-            strSQL &= " INNER JOIN M_ITEM MI ON DD.PARTNO = MI.PARTNO "
-            strSQL &= " WHERE 1 = 1 " & R_WHERE
-            strSQL &= "  ) CIPL "
-            strSQL &= " WHERE SORT = '1' "
-            strSQL &= " ORDER BY SORT DESC ,DETAILSEQNO ASC"
-            cmd = New SqlCommand(strSQL, dbConn)
-            dr = cmd.ExecuteReader
             RowNumber = 5
             StartRowNumber = 5
             While dr.Read
 
-                If WorksheetCIPL.Cells(RowNumber, 12).Value Is Nothing Then
-                    If WorksheetCIPL.Cells(RowNumber, 12).Value = "" Then
-                        WorksheetCIPL.Cells(RowNumber, 12).Value = dr("INVOICENO")
-                    End If
+
+                If SORT & INVOICENUMBER <> "" And SORT & INVOICENUMBER <> dr("SORT") & dr("INVOICENO") Then
+                    WorksheetCIPL.Range("A" & RowNumber.ToString & ":F" & RowNumber.ToString).Merge()
+                    WorksheetCIPL.Cells(RowNumber, 1).Value = "합계"
+
+                    DirectCast(WorksheetCIPL.Range("A" & StartRowNumber & ":A" & RowNumber.ToString), Excel.Range).HorizontalAlignment _
+                             = Excel.XlHAlign.xlHAlignCenter
+                    WorksheetCIPL.Cells(RowNumber, 10).Value = "=SUM(J" & StartRowNumber & ":J" & (RowNumber - 1).ToString & ")"
+                    WorksheetCIPL.Cells(RowNumber, 11).Value = "=SUM(K" & StartRowNumber & ":K" & (RowNumber - 1).ToString & ")"
+                    WorksheetCIPL.Cells(RowNumber, 12).Value = "=SUM(L" & StartRowNumber & ":L" & (RowNumber - 1).ToString & ")"
+                    WorksheetCIPL.Cells(RowNumber, 13).Value = "=SUM(M" & StartRowNumber & ":M" & (RowNumber - 1).ToString & ")"
+                    RowNumber = RowNumber + 1
+                    StartRowNumber = RowNumber
+
+                    INVOICENUMBER = dr("INVOICENO")
+                    SORT = dr("SORT")
                 End If
 
-                WorksheetCIPL.Cells(RowNumber, 1).Value = dr("INVOICENO")
+                If SORT = "" Then SORT = dr("SORT")
+                If INVOICENUMBER = "" Then
+                    INVOICENUMBER = dr("INVOICENO")
+                ElseIf INVOICENUMBER = dr("INVOICENO") Then
+                    WorksheetCIPL.Cells(RowNumber, 1).Value = ""
+                Else
+                    WorksheetCIPL.Cells(RowNumber, 1).Value = dr("INVOICENO")
+                End If
+
                 WorksheetCIPL.Cells(RowNumber, 2).Value = dr("RANNUMBER")
                 WorksheetCIPL.Cells(RowNumber, 3).Value = dr("RANDETAILNUMBER")
 
@@ -221,106 +216,27 @@ Public Class FrmProcessItemExport
                 WorksheetCIPL.Cells(RowNumber, 15).Value = dr("PRODUCT")
                 WorksheetCIPL.Cells(RowNumber, 16).Value = dr("CONVENTIONCODE")
 
+                addlog("[" & dr("PARTNO") & "] 출력", 1)
+
                 RowNumber = RowNumber + 1
 
-                addlog("[" & dr("PARTNO") & "] 출력", 1)
             End While
 
             dr.Close()
             cmd.Dispose()
-            If RowNumber <> StartRowNumber Then
 
-                WorksheetCIPL.Range("A" & RowNumber.ToString & ":F" & RowNumber.ToString).Merge()
-                WorksheetCIPL.Cells(RowNumber, 1).Value = "합계"
+            WorksheetCIPL.Range("A" & RowNumber.ToString & ":F" & RowNumber.ToString).Merge()
+            WorksheetCIPL.Cells(RowNumber, 1).Value = "합계"
 
-                DirectCast(WorksheetCIPL.Range("A" & StartRowNumber & ":A" & RowNumber.ToString), Excel.Range).HorizontalAlignment _
-                 = Excel.XlHAlign.xlHAlignCenter
-                WorksheetCIPL.Cells(RowNumber, 10).Value = "=SUM(G" & StartRowNumber & ":G" & (RowNumber - 1).ToString & ")"
-                WorksheetCIPL.Cells(RowNumber, 11).Value = "=SUM(H" & StartRowNumber & ":H" & (RowNumber - 1).ToString & ")"
-                WorksheetCIPL.Cells(RowNumber, 12).Value = "=SUM(I" & StartRowNumber & ":I" & (RowNumber - 1).ToString & ")"
-                WorksheetCIPL.Cells(RowNumber, 13).Value = "=SUM(J" & StartRowNumber & ":J" & (RowNumber - 1).ToString & ")"
+            DirectCast(WorksheetCIPL.Range("A" & StartRowNumber & ":A" & RowNumber.ToString), Excel.Range).HorizontalAlignment _
+                             = Excel.XlHAlign.xlHAlignCenter
+            WorksheetCIPL.Cells(RowNumber, 10).Value = "=SUM(J" & StartRowNumber & ":J" & (RowNumber - 1).ToString & ")"
+            WorksheetCIPL.Cells(RowNumber, 11).Value = "=SUM(K" & StartRowNumber & ":K" & (RowNumber - 1).ToString & ")"
+            WorksheetCIPL.Cells(RowNumber, 12).Value = "=SUM(L" & StartRowNumber & ":L" & (RowNumber - 1).ToString & ")"
+            WorksheetCIPL.Cells(RowNumber, 13).Value = "=SUM(M" & StartRowNumber & ":M" & (RowNumber - 1).ToString & ")"
 
-                RowNumber = RowNumber + 1
-                WorksheetCIPL.Cells(RowNumber, 1).Value = ""
-
-                RowNumber = RowNumber + 1
-                StartRowNumber = RowNumber
-            End If
-
-            strSQL = " SELECT * FROM ("
-            strSQL &= "  Select "
-            strSQL &= " HD.INVOICENO As INVOICENO "
-            strSQL &= " ,DD.RANNUMBER As RANNUMBER "
-            strSQL &= " ,DD.RANDETAILNUMBER As RANDETAILNUMBER "
-            strSQL &= " ,DD.DETAILSEQNO As DETAILSEQNO "
-            strSQL &= " ,DD.PARTNO As PARTNO "
-            strSQL &= " ,DD.PARTNAME As PARTNAME "
-            strSQL &= " ,DD.PL_QTY As PL_QTY "
-            strSQL &= " ,DD.PL_PUN As PL_PUN "
-            strSQL &= " ,DD.CI_UPRICE_USD As CI_UPRICE_USD "
-            strSQL &= " ,DD.CI_AMOUNT_USD As CI_AMOUNT_USD "
-            strSQL &= " ,DD.PL_NWEIGHTKGS As PL_NWEIGHTKGS "
-            strSQL &= " ,DD.PL_GWEIGHTKGS As PL_GWEIGHTKGS "
-            strSQL &= " ,DD.PACKAGEAMOUNT As PACKAGEAMOUNT "
-            strSQL &= " ,DD.HSCODE As HSCODE "
-            strSQL &= " ,MI.PRODUCT As PRODUCT "
-            strSQL &= " ,DD.CONVENTIONCODE As CONVENTIONCODE "
-            strSQL &= " ,Case REPLACE(MI.PRODUCT,'(주)','') WHEN  '현대케피코' THEN '1' ELSE '0' END SORT"
-            strSQL &= " FROM D_CIPL_H HD INNER JOIN D_CIPL_D DD  "
-            strSQL &= " ON HD.SEQNO = DD.SEQNO  "
-            strSQL &= " INNER JOIN M_ITEM MI ON DD.PARTNO = MI.PARTNO "
-            strSQL &= " WHERE 1 = 1 " & R_WHERE
-            strSQL &= "  ) CIPL "
-            strSQL &= " WHERE SORT = '0' "
-            strSQL &= " ORDER BY SORT DESC,DETAILSEQNO ASC "
-            cmd = New SqlCommand(strSQL, dbConn)
-            dr = cmd.ExecuteReader
-            While dr.Read
-                If WorksheetCIPL.Cells(RowNumber, 12).Value Is Nothing Then
-                    If WorksheetCIPL.Cells(RowNumber, 12).Value = "" Then
-                        WorksheetCIPL.Cells(RowNumber, 12).Value = dr("INVOICENO")
-                    End If
-                End If
-
-                WorksheetCIPL.Cells(RowNumber, 1).Value = dr("INVOICENO")
-                WorksheetCIPL.Cells(RowNumber, 2).Value = dr("RANNUMBER")
-                WorksheetCIPL.Cells(RowNumber, 3).Value = dr("RANDETAILNUMBER")
-
-                WorksheetCIPL.Cells(RowNumber, 4).Value = dr("DETAILSEQNO")
-                WorksheetCIPL.Cells(RowNumber, 5).Value = dr("PARTNO")
-                WorksheetCIPL.Cells(RowNumber, 6).Value = dr("PARTNAME")
-                WorksheetCIPL.Cells(RowNumber, 7).Value = dr("PL_QTY")
-                WorksheetCIPL.Cells(RowNumber, 8).Value = dr("PL_PUN")
-                WorksheetCIPL.Cells(RowNumber, 9).Value = dr("CI_UPRICE_USD")
-                WorksheetCIPL.Cells(RowNumber, 10).Value = dr("CI_AMOUNT_USD")
-                WorksheetCIPL.Cells(RowNumber, 11).Value = dr("PL_NWEIGHTKGS")
-                WorksheetCIPL.Cells(RowNumber, 12).Value = dr("PL_GWEIGHTKGS")
-                WorksheetCIPL.Cells(RowNumber, 13).Value = dr("PACKAGEAMOUNT")
-                WorksheetCIPL.Cells(RowNumber, 14).Value = dr("HSCODE")
-                WorksheetCIPL.Cells(RowNumber, 15).Value = dr("PRODUCT")
-                WorksheetCIPL.Cells(RowNumber, 16).Value = dr("CONVENTIONCODE")
-
-                RowNumber = RowNumber + 1
-
-                addlog("[" & dr("PARTNO") & "] 출력", 1)
-            End While
-            dr.Close()
-            cmd.Dispose()
-
-            If RowNumber <> StartRowNumber Then
-
-                WorksheetCIPL.Range("A" & RowNumber.ToString & ":F" & RowNumber.ToString).Merge()
-                WorksheetCIPL.Cells(RowNumber, 1).Value = "합계"
-
-                DirectCast(WorksheetCIPL.Range("A" & StartRowNumber & ":A" & RowNumber.ToString), Excel.Range).HorizontalAlignment _
-                 = Excel.XlHAlign.xlHAlignCenter
-                WorksheetCIPL.Cells(RowNumber, 10).Value = "=SUM(G" & StartRowNumber & ":G" & (RowNumber - 1).ToString & ")"
-                WorksheetCIPL.Cells(RowNumber, 11).Value = "=SUM(H" & StartRowNumber & ":H" & (RowNumber - 1).ToString & ")"
-                WorksheetCIPL.Cells(RowNumber, 12).Value = "=SUM(I" & StartRowNumber & ":I" & (RowNumber - 1).ToString & ")"
-                WorksheetCIPL.Cells(RowNumber, 13).Value = "=SUM(J" & StartRowNumber & ":J" & (RowNumber - 1).ToString & ")"
-
-            End If
-
+            WorksheetCIPL.Range("F8", "F8").Select()
+            WorksheetCIPL.Pictures.Insert(G_Image & "ReturnableBox.png").Select()
 
             WorksheetCIPL.Cells.Columns("A:P").AutoFit()
             WorksheetCIPL.Range("A3", "P" & RowNumber.ToString).Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
@@ -329,8 +245,9 @@ Public Class FrmProcessItemExport
             WorksheetCIPL.Range("A3", "P" & RowNumber.ToString).Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
             WorksheetCIPL.Range("A3", "P" & RowNumber.ToString).Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlInsideHorizontal).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
             WorksheetCIPL.Range("A3", "P" & RowNumber.ToString).Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlInsideVertical).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
+            'G_ReportPath
 
-            Workbook.SaveAs(FilePath, Microsoft.Office.Interop.Excel.XlFileFormat.xlExcel8)
+            Workbook.SaveAs(G_ReportPath & INVOICENUMBER & ".xls", Microsoft.Office.Interop.Excel.XlFileFormat.xlExcel8)
 
             WorksheetCIPL = Nothing
             Workbook.Close(False)
@@ -383,7 +300,7 @@ Public Class FrmProcessItemExport
             WorksheetMITEM.Range("A1", "G1").Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
             WorksheetMITEM.Cells.Columns("A:G").NumberFormatLocal = "@"
 
-            strSQL = "SELECT *  FROM M_ITEM order by seqno"
+            strSQL = XmlReadVal(DirYenFix(G_APPPath) & gsXmlQuery, "root/EXPORT/ITEM")
             cmd = New SqlCommand(strSQL, dbConn)
             dr = cmd.ExecuteReader
             While dr.Read()

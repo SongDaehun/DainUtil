@@ -5,6 +5,7 @@ Public Class FrmInvoicePackingPrint
     Dim gMessageNumber As Integer = 1
     Dim headerdatatable As New DataTable
     Dim gWhere As String
+
     Private Sub FrmPrint_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         Try
@@ -62,31 +63,32 @@ Public Class FrmInvoicePackingPrint
 
     Private Sub btnPrint_Click(sender As Object, e As EventArgs) Handles btnPrint.Click
 
-        gWhere = ""
-        If cmbSearch101.SelectedIndex <> 0 Then
-            gWhere &= " AND " & headerdatatable.Rows(cmbSearch101.SelectedIndex - 1)("COLUMNNAME")
-            gWhere &= " LIKE '%" & txtSearch101.Text & "%'"
-        End If
+        'gWhere = ""
+        'If cmbSearch101.SelectedIndex <> 0 Then
+        '    gWhere &= " AND " & headerdatatable.Rows(cmbSearch101.SelectedIndex - 1)("COLUMNNAME")
+        '    gWhere &= " LIKE '%" & txtSearch101.Text & "%'"
+        'End If
 
-        If cmbSearch102.SelectedIndex <> 0 Then
-            gWhere &= " AND " & headerdatatable.Rows(cmbSearch102.SelectedIndex - 1)("COLUMNNAME")
-            gWhere &= " LIKE '%" & txtSearch102.Text & "%'"
-        End If
+        'If cmbSearch102.SelectedIndex <> 0 Then
+        '    gWhere &= " AND " & headerdatatable.Rows(cmbSearch102.SelectedIndex - 1)("COLUMNNAME")
+        '    gWhere &= " LIKE '%" & txtSearch102.Text & "%'"
+        'End If
 
-        If cmbSearch103.SelectedIndex <> 0 Then
-            gWhere &= " AND " & headerdatatable.Rows(cmbSearch103.SelectedIndex - 1)("COLUMNNAME")
-            gWhere &= " LIKE '%" & txtSearch103.Text & "%'"
-        End If
+        'If cmbSearch103.SelectedIndex <> 0 Then
+        '    gWhere &= " AND " & headerdatatable.Rows(cmbSearch103.SelectedIndex - 1)("COLUMNNAME")
+        '    gWhere &= " LIKE '%" & txtSearch103.Text & "%'"
+        'End If
 
-        R_WHERE = gWhere
+        'R_WHERE = gWhere
 
-        SaveFileDialog1.FileName = ""
-        SaveFileDialog1.Filter = "엑셀파일(*.xls;*.xlsx)|*.xls;*.xlsx"
-        SaveFileDialog1.ShowDialog()
+        'SaveFileDialog1.FileName = ""
+        'SaveFileDialog1.Filter = "엑셀파일(*.xls;*.xlsx)|*.xls;*.xlsx"
+        'SaveFileDialog1.ShowDialog()
 
         Dim sform As New Form
         If rdbCIPLlist.Checked Then
-            sform = New FrmProcessItemExport(SaveFileDialog1.FileName, R_CIPL_LIST)
+            sform = New FrmProcessItemExport(R_CIPL_LIST)
+            'sform = New FrmProcessItemExport(SaveFileDialog1.FileName, R_CIPL_LIST)
             sform.ShowDialog()
         End If
     End Sub

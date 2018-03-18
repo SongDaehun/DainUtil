@@ -403,7 +403,7 @@ Public Class FrmItem
         SaveFileDialog1.FileName = ""
         SaveFileDialog1.Filter = "엑셀파일(*.xls;*.xlsx)|*.xls;*.xlsx"
         SaveFileDialog1.ShowDialog()
-        Dim sForm As New FrmProcessItemExport(SaveFileDialog1.FileName, R_ITEM)
+        Dim sForm As New FrmProcessItemExport(R_ITEM)
         sForm.ShowDialog()
     End Sub
 

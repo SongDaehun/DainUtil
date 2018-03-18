@@ -7,7 +7,7 @@ Public Class FrmInvoicePacking
     Dim gMessageNumber As Integer = 1
     Dim CheckboxColumn As New DataGridViewCheckBoxColumn
     Dim gWhere As String
-
+    Dim headercb As New CheckBox
     'Dim headerdatatable2 = New DataTable
     'Dim gOrder2 As String
     'Dim gMessageNumber2 As Integer = 2
@@ -116,7 +116,6 @@ Public Class FrmInvoicePacking
         Dim cmd As SqlCommand
         Dim dr As SqlDataReader
         Dim strSQL As String
-
 
         Try
 
@@ -369,6 +368,8 @@ Public Class FrmInvoicePacking
         'MsgBox(DataGridView1.CurrentCell.RowIndex)
         'MsgBox(DataGridView1.CurrentCell.ColumnIndex)
         'MsgBox(DataGridView1.CurrentCell.RowIndex)
+
+
         Dim rowIndex As Integer
         If Load_flag Then Exit Sub
         If DataGridView1.RowCount = 0 Then
@@ -383,13 +384,39 @@ Public Class FrmInvoicePacking
 
             Exit Sub
         End If
+
         If DataGridView1.CurrentCell.ColumnIndex = 0 Then
             If DataGridView1.Rows(DataGridView1.CurrentCell.RowIndex).Cells(0).Value Then
                 DataGridView1.Rows(DataGridView1.CurrentCell.RowIndex).Cells(0).Value = False
+                headercb.Checked = False
             Else
                 DataGridView1.Rows(DataGridView1.CurrentCell.RowIndex).Cells(0).Value = True
             End If
         End If
+
+        'If DataGridView1.SelectedColumns(0).Index = 0 Then
+        '    If DataGridView1.SelectedRows(0).Index = 0 Then
+        '        If headercb.Checked Then
+        '            headercb.Checked = False
+        '            For i As Integer = 0 To DataGridView1.Rows.Count - 1
+        '                DataGridView1.Rows(i).Cells(0).Value = False
+        '            Next
+        '        Else
+        '            headercb.Checked = True
+        '            For i As Integer = 0 To DataGridView1.Rows.Count - 1
+        '                DataGridView1.Rows(i).Cells(0).Value = True
+        '            Next
+        '        End If
+        '    Else
+        '        If DataGridView1.Rows(DataGridView1.SelectedRows(0).Index).Cells(0).Value Then
+        '            DataGridView1.Rows(DataGridView1.SelectedRows(0).Index).Cells(0).Value = False
+        '            headercb.Checked = False
+        '        Else
+        '            DataGridView1.Rows(DataGridView1.SelectedRows(0).Index).Cells(0).Value = True
+        '        End If
+        '    End If
+        'End If
+
     End Sub
 
     'Private Sub DataGridView2_CellClick(sender As Object, e As DataGridViewCellEventArgs)
@@ -477,6 +504,19 @@ Public Class FrmInvoicePacking
     End Function
 
     Private Sub btnPrint_Click(sender As Object, e As EventArgs) Handles btnPrint.Click
+        R_Whare = ""
+        For i As Integer = 0 To DataGridView1.Rows.Count - 1
+            If DataGridView1.Rows(i).Cells(0).Value Then
+                If R_Whare <> "" Then R_Whare &= ","
+                R_Whare &= "'" & DataGridView1.Rows(i).Cells(DataGridView1.ColumnCount - 1).Value & "'"
+            End If
+        Next
+
+        If R_Whare = "" Then
+            MsgBoxExclamation("데이터가 선택되지 않았습니다.")
+            Exit Sub
+        End If
+
         Dim sform As New FrmInvoicePackingPrint
         sform.ShowDialog()
     End Sub
@@ -486,6 +526,41 @@ Public Class FrmInvoicePacking
     '        DataGridView2.Rows.RemoveAt(DataGridView1.RowCount - 1)
     '    End While
     'End Function
+    Private Sub DataGridView1_CellPainting(sender As Object, e As DataGridViewCellPaintingEventArgs) Handles DataGridView1.CellPainting
+
+        If e.ColumnIndex = 0 And e.RowIndex = -1 Then
+            e.PaintBackground(e.ClipBounds, False)
+            Dim pt As Point = e.CellBounds.Location
+
+            Dim nChkBoxWidth As Integer = 15
+            Dim nChkBoxHeight As Integer = 15
+            Dim offsetx As Integer = (e.CellBounds.Width - nChkBoxWidth) / 2
+            Dim offsety As Integer = (e.CellBounds.Height - nChkBoxHeight) / 2
+
+            pt.X = pt.X + offsetx
+            pt.Y = pt.Y + offsety
 
 
+            headercb.Size = New Size(nChkBoxWidth, nChkBoxHeight)
+            headercb.Location = pt
+            AddHandler headercb.Click, AddressOf Header_ChekedChanged
+            'headercb.CheckedChanged = New EventHandler(Header_ChekedChanged)
+            DataGridView1.Controls.Add(headercb)
+            e.Handled = True
+        End If
+    End Sub
+    Private Sub Header_ChekedChanged(sender As Object, e As EventArgs)
+        If headercb.Checked Then
+
+            For i As Integer = 0 To DataGridView1.Rows.Count - 1
+                DataGridView1.Rows(i).Cells(0).Value = True
+            Next
+
+        Else
+
+            For i As Integer = 0 To DataGridView1.Rows.Count - 1
+                DataGridView1.Rows(i).Cells(0).Value = False
+            Next
+        End If
+    End Sub
 End Class
