@@ -108,20 +108,27 @@ Public Class FrmProcessExcelImport
             txtLog.Text &= vbCrLf & "** " & Importfiles(i) & "의 처리를 시작합니다. **"
             txtLog.Text &= vbCrLf & "***************************************************"
 
-            If Importfiles(i).ToUpper = "KVPO" Then
-                If ImportKVPO_CI(Importfiles(i)) Then
-                    SuccessCount = SuccessCount + 1
-                Else
-                    FailCount = FailCount + 1
-                    ImportFailFile &= ImportFailFile(i)
-                End If
+            'If Importfiles(i).ToUpper = "KVPO" Then
+            '    If ImportKVPO_CI(Importfiles(i)) Then
+            '        SuccessCount = SuccessCount + 1
+            '    Else
+            '        FailCount = FailCount + 1
+            '        ImportFailFile &= ImportFailFile(i)
+            '    End If
+            'Else
+            '    If ImportKCP_CI(Importfiles(i)) Then
+            '        SuccessCount = SuccessCount + 1
+            '    Else
+            '        FailCount = FailCount + 1
+            '        ImportFailFile &= ImportFailFile(i)
+            '    End If
+            'End If
+
+            If ImportKCP_CI(Importfiles(i)) Then
+                SuccessCount = SuccessCount + 1
             Else
-                If ImportKCP_CI(Importfiles(i)) Then
-                    SuccessCount = SuccessCount + 1
-                Else
-                    FailCount = FailCount + 1
-                    ImportFailFile &= ImportFailFile(i)
-                End If
+                FailCount = FailCount + 1
+                ImportFailFile &= ImportFailFile(i)
             End If
 
             If ProgressBar1.Value + 1 <= ProgressBar1.Maximum Then

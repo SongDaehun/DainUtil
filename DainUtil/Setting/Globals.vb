@@ -91,7 +91,7 @@ Module Globals
         DbConnect = True
 
     End Function
-    Public Sub GetEnv()
+    Public Function GetEnv() As Boolean
         Dim strSQL As String
         'Dim cmd As OleDb.OleDbCommand
         'Dim dr As OleDb.OleDbDataReader
@@ -141,13 +141,14 @@ CType(Attribute.GetCustomAttribute(
             If System.IO.Directory.Exists(G_TextoutPath) = False Then
                 System.IO.Directory.CreateDirectory(G_TextoutPath)
             End If
-
+            GetEnv = True
         Catch ex As Exception
             MsgBoxFail(ex.Message)
+            GetEnv = False
         Finally
             dr.Close()
             cmd.Dispose()
         End Try
-    End Sub
+    End Function
 
 End Module

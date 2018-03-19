@@ -4,10 +4,10 @@ Public Class FrmMain
 
     Private Sub FrmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         'G_IPUser
-        GetIPUser()
-        DbConnect()
-        Interval()
-        GetEnv()
+        If GetIPUser() = False Then Application.Exit()
+        If DbConnect() = False Then Application.Exit()
+        If Interval() = False Then Application.Exit()
+        If GetEnv() = False Then Application.Exit()
         Me.Text = G_APPNAME + "(" + G_Version + ")"
         ClearData()
 
