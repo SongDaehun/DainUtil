@@ -3194,356 +3194,360 @@ Module Initial
                 cmd.ExecuteNonQuery()
                 cmd.Dispose()
             End If
+
+            If vmenteStep < 9 Then
+                strSQL = " DELETE FROM F_LISTOUTITEM WHERE MESSAGEID = '900' "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " INSERT INTO F_LISTOUTITEM VALUES('900','H','CODEDIV','구분','50','0','1','0','0','') "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('900','H','CONTENTSCODE','코드','50','0','2','1','0','') "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('900','H','CONTENTS','내용','300','0','3','1','0','') "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('900','H','ABBREVIATION','축약','50','0','4','1','0','') "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('900','H','REFERENCE','참조','50','0','5','1','0','')  "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "UPDATE F_GENENV Set MENTESTEP = '9'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+            If vmenteStep < 10 Then
+                strSQL = " INSERT INTO F_LISTOUTITEM VALUES('901','H','PARTNO','제품코드','80','0','1','1','0','') "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','PARTNAME','품명규격1 (규격내역)','200','0','2','1','0','') "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','HSCODE','세번부호','80','0','3','1','0','') "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','PRODUCT','제조자','100','0','4','1','0','') "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','CONVENTIONCODE','협정','50','0','5','1','0','')  "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','STANDARDPARTNAME','표준품명','200','0','6','1','0','')  "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','TRADEPARTNAME','거래품명','200','0','7','1','0','')  "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "DROP TABLE F_LISTOUTITEM_INI "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "SELECT * INTO F_LISTOUTITEM_INI FROM F_LISTOUTITEM"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "UPDATE F_GENENV Set MENTESTEP = '10'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+            If vmenteStep < 11 Then
+
+                strSQL = " SELECT * INTO F_GENENV_BK FROM F_GENENV "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " DROP TABLE F_GENENV "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "CREATE TABLE F_GENENV( "
+                strSQL &= " MENTESTEP  INT "
+                strSQL &= " ,DATAKEEPDAYS  INT "
+                strSQL &= " ,FILEOUTFLAG  INT "
+                strSQL &= " ,REPORTCODE NVARCHAR(20) "
+                strSQL &= " ,REPORTNAME NVARCHAR(255)"
+                strSQL &= " ,REPORTPRESENTER NVARCHAR(255)"
+                strSQL &= " ,REPORTSEQNO BIGINT"
+
+                strSQL &= " ,SHIPPERSEXPORT1CODE NVARCHAR(20)"
+                strSQL &= " ,SHIPPERSEXPORT1NAME NVARCHAR(255)"
+                strSQL &= " ,SHIPPERSEXPORT1PRESENTER NVARCHAR(255)"
+                strSQL &= " ,SHIPPERSEXPORT1POSTALCODE NVARCHAR(6)"
+                strSQL &= " ,SHIPPERSEXPORT1ADDRESS NVARCHAR(255)"
+                strSQL &= " ,SHIPPERSEXPORT1CUSTOMSCODE NVARCHAR(20)"
+
+                strSQL &= " ,SHIPPERSEXPORTELSECODE NVARCHAR(20)"
+                strSQL &= " ,SHIPPERSEXPORTELSENAME NVARCHAR(255)"
+                strSQL &= " ,SHIPPERSEXPORTELSEPRESENTER NVARCHAR(255)"
+                strSQL &= " ,SHIPPERSEXPORTELSEPOSTALCODE NVARCHAR(6)"
+                strSQL &= " ,SHIPPERSEXPORTELSEADDRESS NVARCHAR(255)"
+                strSQL &= " ,SHIPPERSEXPORTELSECUSTOMSCODE NVARCHAR(20)"
+                strSQL &= " )"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " INSERT INTO F_GENENV "
+                strSQL &= " SELECT "
+                strSQL &= " MENTESTEP "
+                strSQL &= " ,'7' AS DATAKEEPDAYS "
+                strSQL &= " ,'1' AS FILEOUTFLAG "
+                strSQL &= " ,REPORTCODE "
+                strSQL &= " ,REPORTNAME "
+                strSQL &= " ,REPORTPRESENTER "
+                strSQL &= " ,REPORTSEQNO "
+                strSQL &= " ,SHIPPERSEXPORT1CODE "
+                strSQL &= " ,SHIPPERSEXPORT1NAME "
+                strSQL &= " ,SHIPPERSEXPORT1PRESENTER "
+                strSQL &= " ,SHIPPERSEXPORT1POSTALCODE "
+                strSQL &= " ,SHIPPERSEXPORT1ADDRESS "
+                strSQL &= " ,SHIPPERSEXPORT1CUSTOMSCODE "
+                strSQL &= " ,SHIPPERSEXPORTELSECODE "
+                strSQL &= " ,SHIPPERSEXPORTELSENAME "
+                strSQL &= " ,SHIPPERSEXPORTELSEPRESENTER "
+                strSQL &= " ,SHIPPERSEXPORTELSEPOSTALCODE "
+                strSQL &= " ,SHIPPERSEXPORTELSEADDRESS "
+                strSQL &= " ,SHIPPERSEXPORTELSECUSTOMSCODE "
+                strSQL &= " FROM F_GENENV_BK"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " DROP TABLE F_GENENV_BK"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "UPDATE F_GENENV Set MENTESTEP = '11'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+            If vmenteStep < 12 Then
+                strSQL = " CREATE TABLE W_SINGLETABLE ( "
+                strSQL &= " DETAILSEQNO INT NOT NULL"
+                strSQL &= " ,PARTNO NVARCHAR(30) "
+                strSQL &= " ,PALLETRATE Decimal(9,6) "
+                strSQL &= " ,PALLETAMOUNT INT "
+                strSQL &= " ,ADJUSTFLAG INT "
+                strSQL &= " PRIMARY KEY (PARTNO) "
+                strSQL &= " ) "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "UPDATE F_GENENV Set MENTESTEP = '12'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+            If vmenteStep < 13 Then
+                strSQL = " SELECT * INTO W_CIPL_H FROM D_CIPL_H"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " SELECT * INTO W_CIPL_D FROM D_CIPL_D"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "UPDATE F_GENENV Set MENTESTEP = '13'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+            If vmenteStep < 14 Then
+                strSQL = "UPDATE F_LISTOUTITEM SET "
+                strSQL &= " DATATYPE = '2' "
+                strSQL &= " WHERE MESSAGEID = '901' AND COLUMNNAME = 'CONVENTIONCODE'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "UPDATE F_GENENV Set MENTESTEP = '14'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+            If vmenteStep < 15 Then
+                strSQL = " DELETE FROM F_LISTOUTITEM_INI"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " INSERT INTO F_LISTOUTITEM_INI SELECT * FROM F_LISTOUTITEM "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "UPDATE F_GENENV Set MENTESTEP = '15'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+            If vmenteStep < 16 Then
+                strSQL = " CREATE TABLE M_CUSTOMCODENAME "
+                strSQL &= " ( "
+                strSQL &= " STANDARDNAME                          NVARCHAR(40)             Not NULL "
+                strSQL &= " ,COLUMNSNAME                          NVARCHAR(255)             Not NULL "
+                strSQL &= " PRIMARY KEY ( STANDARDNAME) "
+                strSQL &= " ) "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " INSERT INTO M_CUSTOMCODENAME VALUES('협정','CONVENTIONCODE')"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " CREATE TABLE M_CUSTOMCODESET ("
+                strSQL &= " CODEDIV	NVARCHAR(255)  Not NULL"
+                strSQL &= " ,CONTENTS NVARCHAR(255)"
+                strSQL &= " PRIMARY KEY (CODEDIV,CONTENTS)"
+                strSQL &= " )"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " INSERT INTO M_CUSTOMCODESET VALUES('협정','한-중 FTA')"
+                strSQL &= " INSERT INTO M_CUSTOMCODESET VALUES('협정','APTA')"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " INSERT INTO F_LISTOUTITEM VALUES('902','H','CODEDIV','구분','50','0','1','0','0','') "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('902','H','CONTENTS','내용','300','0','2','1','0','') "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " DELETE FROM F_LISTOUTITEM_INI"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " INSERT INTO F_LISTOUTITEM_INI Select * FROM F_LISTOUTITEM "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "UPDATE F_GENENV Set MENTESTEP = '16'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+            If vmenteStep < 17 Then
+                strSQL = "UPDATE M_ITEM SET CONVENTIONCODE = '해당없음' WHERE ISNULL(CONVENTIONCODE,'') = '' "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "UPDATE F_GENENV Set MENTESTEP = '17'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+            If vmenteStep < 18 Then
+                strSQL = "UPDATE F_LISTOUTITEM SET INDICATIONWIDTH = '100' WHERE MESSAGEID ='901' AND COLUMNNAME = 'CONVENTIONCODE'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "UPDATE F_LISTOUTITEM_INI SET INDICATIONWIDTH = '100' WHERE MESSAGEID ='901' AND COLUMNNAME = 'CONVENTIONCODE'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "UPDATE F_GENENV Set MENTESTEP = '18'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+            If vmenteStep < 19 Then
+                strSQL = " DROP TABLE M_CUSTOMCODESET "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " INSERT INTO  M_CUSTOMCODENAME VALUES('LOADING PORT','') "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " CREATE TABLE M_CUSTOMCODESET ( "
+                strSQL &= " [CODEDIV] [nvarchar](255) NOT NULL, "
+                strSQL &= " [CONTENTSCODE] [nvarchar](20) NOT NULL, "
+                strSQL &= " [CONTENTS] [nvarchar](255) NOT NULL , "
+                strSQL &= " [ABBREVIATION] [nvarchar](255) NULL, "
+                strSQL &= " [REFERENCE] [nvarchar](255) NULL, "
+                strSQL &= " PRIMARY KEY ( 	[CODEDIV] ASC, 	[CONTENTSCODE] ASC, 	[CONTENTS] ASC) "
+                strSQL &= " )  "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " INSERT INTO M_CUSTOMCODESET VALUES ('협정','01','한-중 FTA','','')  "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " INSERT INTO M_CUSTOMCODESET VALUES ('협정','02','APTA','','')  "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "UPDATE F_GENENV Set MENTESTEP = '19'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+            If vmenteStep < 20 Then
+                strSQL = "DELETE FROM F_LISTOUTITEM WHERE MESSAGEID = '902'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "INSERT INTO F_LISTOUTITEM SELECT '902' AS MESSAGEID,PRECESSINGCLASS,COLUMNNAME,INDICATIONNAME,INDICATIONWIDTH,INDICATIONWIDEPOSITION,INDICATIONORDER,VISIBLE,DATATYPE,DATAFORMAT  FROM F_LISTOUTITEM WHERE MESSAGEID = '900'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "UPDATE F_GENENV Set MENTESTEP = '20'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+            If vmenteStep < 21 Then
+                strSQL = " DELETE FROM F_LISTOUTITEM_INI"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " INSERT INTO F_LISTOUTITEM_INI SELECT * FROM F_LISTOUTITEM"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "UPDATE F_GENENV Set MENTESTEP = '21'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+            Return True
         Catch ex As Exception
             MsgBoxFail(ex.Message)
-            Application.Exit()
+            Return False
         End Try
 
-        If vmenteStep < 9 Then
-            strSQL = " DELETE FROM F_LISTOUTITEM WHERE MESSAGEID = '900' "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
 
-            strSQL = " INSERT INTO F_LISTOUTITEM VALUES('900','H','CODEDIV','구분','50','0','1','0','0','') "
-            strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('900','H','CONTENTSCODE','코드','50','0','2','1','0','') "
-            strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('900','H','CONTENTS','내용','300','0','3','1','0','') "
-            strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('900','H','ABBREVIATION','축약','50','0','4','1','0','') "
-            strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('900','H','REFERENCE','참조','50','0','5','1','0','')  "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "UPDATE F_GENENV Set MENTESTEP = '9'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-        End If
-
-        If vmenteStep < 10 Then
-            strSQL = " INSERT INTO F_LISTOUTITEM VALUES('901','H','PARTNO','제품코드','80','0','1','1','0','') "
-            strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','PARTNAME','품명규격1 (규격내역)','200','0','2','1','0','') "
-            strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','HSCODE','세번부호','80','0','3','1','0','') "
-            strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','PRODUCT','제조자','100','0','4','1','0','') "
-            strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','CONVENTIONCODE','협정','50','0','5','1','0','')  "
-            strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','STANDARDPARTNAME','표준품명','200','0','6','1','0','')  "
-            strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','TRADEPARTNAME','거래품명','200','0','7','1','0','')  "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "DROP TABLE F_LISTOUTITEM_INI "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "SELECT * INTO F_LISTOUTITEM_INI FROM F_LISTOUTITEM"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "UPDATE F_GENENV Set MENTESTEP = '10'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-        End If
-
-        If vmenteStep < 11 Then
-
-            strSQL = " SELECT * INTO F_GENENV_BK FROM F_GENENV "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = " DROP TABLE F_GENENV "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "CREATE TABLE F_GENENV( "
-            strSQL &= " MENTESTEP  INT "
-            strSQL &= " ,DATAKEEPDAYS  INT "
-            strSQL &= " ,FILEOUTFLAG  INT "
-            strSQL &= " ,REPORTCODE NVARCHAR(20) "
-            strSQL &= " ,REPORTNAME NVARCHAR(255)"
-            strSQL &= " ,REPORTPRESENTER NVARCHAR(255)"
-            strSQL &= " ,REPORTSEQNO BIGINT"
-
-            strSQL &= " ,SHIPPERSEXPORT1CODE NVARCHAR(20)"
-            strSQL &= " ,SHIPPERSEXPORT1NAME NVARCHAR(255)"
-            strSQL &= " ,SHIPPERSEXPORT1PRESENTER NVARCHAR(255)"
-            strSQL &= " ,SHIPPERSEXPORT1POSTALCODE NVARCHAR(6)"
-            strSQL &= " ,SHIPPERSEXPORT1ADDRESS NVARCHAR(255)"
-            strSQL &= " ,SHIPPERSEXPORT1CUSTOMSCODE NVARCHAR(20)"
-
-            strSQL &= " ,SHIPPERSEXPORTELSECODE NVARCHAR(20)"
-            strSQL &= " ,SHIPPERSEXPORTELSENAME NVARCHAR(255)"
-            strSQL &= " ,SHIPPERSEXPORTELSEPRESENTER NVARCHAR(255)"
-            strSQL &= " ,SHIPPERSEXPORTELSEPOSTALCODE NVARCHAR(6)"
-            strSQL &= " ,SHIPPERSEXPORTELSEADDRESS NVARCHAR(255)"
-            strSQL &= " ,SHIPPERSEXPORTELSECUSTOMSCODE NVARCHAR(20)"
-            strSQL &= " )"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = " INSERT INTO F_GENENV "
-            strSQL &= " SELECT "
-            strSQL &= " MENTESTEP "
-            strSQL &= " ,'7' AS DATAKEEPDAYS "
-            strSQL &= " ,'1' AS FILEOUTFLAG "
-            strSQL &= " ,REPORTCODE "
-            strSQL &= " ,REPORTNAME "
-            strSQL &= " ,REPORTPRESENTER "
-            strSQL &= " ,REPORTSEQNO "
-            strSQL &= " ,SHIPPERSEXPORT1CODE "
-            strSQL &= " ,SHIPPERSEXPORT1NAME "
-            strSQL &= " ,SHIPPERSEXPORT1PRESENTER "
-            strSQL &= " ,SHIPPERSEXPORT1POSTALCODE "
-            strSQL &= " ,SHIPPERSEXPORT1ADDRESS "
-            strSQL &= " ,SHIPPERSEXPORT1CUSTOMSCODE "
-            strSQL &= " ,SHIPPERSEXPORTELSECODE "
-            strSQL &= " ,SHIPPERSEXPORTELSENAME "
-            strSQL &= " ,SHIPPERSEXPORTELSEPRESENTER "
-            strSQL &= " ,SHIPPERSEXPORTELSEPOSTALCODE "
-            strSQL &= " ,SHIPPERSEXPORTELSEADDRESS "
-            strSQL &= " ,SHIPPERSEXPORTELSECUSTOMSCODE "
-            strSQL &= " FROM F_GENENV_BK"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = " DROP TABLE F_GENENV_BK"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "UPDATE F_GENENV Set MENTESTEP = '11'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-        End If
-
-        If vmenteStep < 12 Then
-            strSQL = " CREATE TABLE W_SINGLETABLE ( "
-            strSQL &= " DETAILSEQNO INT NOT NULL"
-            strSQL &= " ,PARTNO NVARCHAR(30) "
-            strSQL &= " ,PALLETRATE Decimal(9,6) "
-            strSQL &= " ,PALLETAMOUNT INT "
-            strSQL &= " ,ADJUSTFLAG INT "
-            strSQL &= " PRIMARY KEY (PARTNO) "
-            strSQL &= " ) "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "UPDATE F_GENENV Set MENTESTEP = '12'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-        End If
-
-        If vmenteStep < 13 Then
-            strSQL = " SELECT * INTO W_CIPL_H FROM D_CIPL_H"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = " SELECT * INTO W_CIPL_D FROM D_CIPL_D"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "UPDATE F_GENENV Set MENTESTEP = '13'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-        End If
-        If vmenteStep < 14 Then
-            strSQL = "UPDATE F_LISTOUTITEM SET "
-            strSQL &= " DATATYPE = '2' "
-            strSQL &= " WHERE MESSAGEID = '901' AND COLUMNNAME = 'CONVENTIONCODE'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "UPDATE F_GENENV Set MENTESTEP = '14'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-        End If
-
-        If vmenteStep < 15 Then
-            strSQL = " DELETE FROM F_LISTOUTITEM_INI"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = " INSERT INTO F_LISTOUTITEM_INI SELECT * FROM F_LISTOUTITEM "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "UPDATE F_GENENV Set MENTESTEP = '15'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-        End If
-
-        If vmenteStep < 16 Then
-            strSQL = " CREATE TABLE M_CUSTOMCODENAME "
-            strSQL &= " ( "
-            strSQL &= " STANDARDNAME                          NVARCHAR(40)             Not NULL "
-            strSQL &= " ,COLUMNSNAME                          NVARCHAR(255)             Not NULL "
-            strSQL &= " PRIMARY KEY ( STANDARDNAME) "
-            strSQL &= " ) "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = " INSERT INTO M_CUSTOMCODENAME VALUES('협정','CONVENTIONCODE')"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = " CREATE TABLE M_CUSTOMCODESET ("
-            strSQL &= " CODEDIV	NVARCHAR(255)  Not NULL"
-            strSQL &= " ,CONTENTS NVARCHAR(255)"
-            strSQL &= " PRIMARY KEY (CODEDIV,CONTENTS)"
-            strSQL &= " )"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = " INSERT INTO M_CUSTOMCODESET VALUES('협정','한-중 FTA')"
-            strSQL &= " INSERT INTO M_CUSTOMCODESET VALUES('협정','APTA')"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = " INSERT INTO F_LISTOUTITEM VALUES('902','H','CODEDIV','구분','50','0','1','0','0','') "
-            strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('902','H','CONTENTS','내용','300','0','2','1','0','') "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = " DELETE FROM F_LISTOUTITEM_INI"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = " INSERT INTO F_LISTOUTITEM_INI Select * FROM F_LISTOUTITEM "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "UPDATE F_GENENV Set MENTESTEP = '16'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-        End If
-
-        If vmenteStep < 17 Then
-            strSQL = "UPDATE M_ITEM SET CONVENTIONCODE = '해당없음' WHERE ISNULL(CONVENTIONCODE,'') = '' "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "UPDATE F_GENENV Set MENTESTEP = '17'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-        End If
-
-        If vmenteStep < 18 Then
-            strSQL = "UPDATE F_LISTOUTITEM SET INDICATIONWIDTH = '100' WHERE MESSAGEID ='901' AND COLUMNNAME = 'CONVENTIONCODE'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "UPDATE F_LISTOUTITEM_INI SET INDICATIONWIDTH = '100' WHERE MESSAGEID ='901' AND COLUMNNAME = 'CONVENTIONCODE'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "UPDATE F_GENENV Set MENTESTEP = '18'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-        End If
-
-        If vmenteStep < 19 Then
-            strSQL = " DROP TABLE M_CUSTOMCODESET "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = " INSERT INTO  M_CUSTOMCODENAME VALUES('LOADING PORT','') "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = " CREATE TABLE M_CUSTOMCODESET ( "
-            strSQL &= " [CODEDIV] [nvarchar](255) NOT NULL, "
-            strSQL &= " [CONTENTSCODE] [nvarchar](20) NOT NULL, "
-            strSQL &= " [CONTENTS] [nvarchar](255) NOT NULL , "
-            strSQL &= " [ABBREVIATION] [nvarchar](255) NULL, "
-            strSQL &= " [REFERENCE] [nvarchar](255) NULL, "
-            strSQL &= " PRIMARY KEY ( 	[CODEDIV] ASC, 	[CONTENTSCODE] ASC, 	[CONTENTS] ASC) "
-            strSQL &= " )  "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = " INSERT INTO M_CUSTOMCODESET VALUES ('협정','01','한-중 FTA','','')  "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = " INSERT INTO M_CUSTOMCODESET VALUES ('협정','02','APTA','','')  "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "UPDATE F_GENENV Set MENTESTEP = '19'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-        End If
-
-        If vmenteStep < 20 Then
-            strSQL = "DELETE FROM F_LISTOUTITEM WHERE MESSAGEID = '902'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "INSERT INTO F_LISTOUTITEM SELECT '902' AS MESSAGEID,PRECESSINGCLASS,COLUMNNAME,INDICATIONNAME,INDICATIONWIDTH,INDICATIONWIDEPOSITION,INDICATIONORDER,VISIBLE,DATATYPE,DATAFORMAT  FROM F_LISTOUTITEM WHERE MESSAGEID = '900'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "UPDATE F_GENENV Set MENTESTEP = '20'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-        End If
-
-        If vmenteStep < 21 Then
-            strSQL = " DELETE FROM F_LISTOUTITEM_INI"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = " INSERT INTO F_LISTOUTITEM_INI SELECT * FROM F_LISTOUTITEM"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-
-            strSQL = "UPDATE F_GENENV Set MENTESTEP = '21'"
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
-            cmd.Dispose()
-        End If
 
 
     End Function

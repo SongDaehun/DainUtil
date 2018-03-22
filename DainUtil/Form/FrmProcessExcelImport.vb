@@ -98,6 +98,13 @@ Public Class FrmProcessExcelImport
 
         Importfiles = getFiles(G_ExcelInPath, "*.xls | *.xlsx", System.IO.SearchOption.TopDirectoryOnly)
 
+        If Importfiles.Length = 0 Then
+            addlog("임포트할 파일이 없습니다.", 2)
+            MsgBoxOK("임포트할 파일이 없습니다." & vbCrLf & ImportFailFile)
+            Me.Close()
+            Exit Sub
+        End If
+
         ProgressBar1.Maximum = Importfiles.Length
 
         For i As Integer = 0 To Importfiles.Length - 1
@@ -139,9 +146,12 @@ Public Class FrmProcessExcelImport
         Next
 
         If FailCount > 0 Then
-            addlog("임포트 처리가 종료되었습니다." & vbCrLf & "처리에 실패한 파일이 있습니다. 아래의 파일을 참고해주세요" & vbCrLf & ImportFailFile, 2)
+            '[알림]임포트를 완료했습니다. (성공1건/1건)
+            addlog("임포트를 완료했습니다. (성공 : " & SuccessCount & " 건 / 총 " & (SuccessCount + FailCount).ToString & " 건) " & vbCrLf & "처리에 실패한 파일이 있습니다. 아래의 파일을 참고해주세요" & vbCrLf & ImportFailFile, 2)
+            MsgBoxOK("임포트를 완료했습니다. (성공 : " & SuccessCount & " 건 / 총 " & (SuccessCount + FailCount).ToString & " 건) " & vbCrLf & "처리에 실패한 파일이 있습니다. 아래의 파일을 참고해주세요" & vbCrLf & ImportFailFile)
         Else
-            addlog("임포트 처리가 종료되었습니다.", 3)
+            addlog("임포트를 완료했습니다. (성공 : " & SuccessCount & " 건 / 총 " & (SuccessCount + FailCount).ToString & " 건) ", 3)
+            MsgBoxOK("임포트를 완료했습니다. (성공 : " & SuccessCount & " 건 / 총 " & (SuccessCount + FailCount).ToString & " 건) ")
         End If
 
     End Sub
@@ -563,12 +573,13 @@ Public Class FrmProcessExcelImport
                         '        "AIRPORT,PYEONGTAEK SEAPORT,INCHON SEAPORT 중에 하나여야 합니다.", 2)
                         'End If
 
-                        cmd = New SqlCommand("SELECT top 1 ISNULL(CONTENTSCODE,'') FROM M_CUSTOMCODESET WHERE CODEDIV = 'LOADING PORT'  AND CONTENTS LIKE '%" & WorksheetCI.Cells(15, 4).Value.ToString.ToUpper.Contains("AIRPORT") & "%'", dbConn)
+                        cmd = New SqlCommand("SELECT CONTENTSCODE, ISNULL(CONTENTS,'') AS CONTENTS FROM M_CUSTOMCODESET WHERE CODEDIV = 'LOADING PORT' ", dbConn)
                         dr = cmd.ExecuteReader
-                        If dr.HasRows Then
-                            dr.Read()
-                            Loading_Port_Code = dr("CONTENTSCODE")
-                        End If
+                        While dr.Read
+                            If WorksheetCI.Cells(15, 4).Value.ToString.ToUpper.Contains(dr("CONTENTS").ToString.ToUpper) Then
+                                Loading_Port_Code = dr("CONTENTSCODE")
+                            End If
+                        End While
                         dr.Close()
                         cmd.Dispose()
 
@@ -1048,7 +1059,7 @@ Public Class FrmProcessExcelImport
                     strSQL &= " ," & ColumnSet(WorksheetCI.Cells(13, 6).Value.ToString.Replace(" ", "").Replace("PURCHASEORDER", "").Replace(":", ""))
                     'LOADINGPORTCODE NVARCHAR(100)
 
-                    cmd = New SqlCommand("SELECT top 1 ISNULL(CONTENTSCODE,'') FROM M_CUSTOMCODESET WHERE CODEDIV = 'LOADING PORT'  AND CONTENTS LIKE '%" & WorksheetCI.Cells(15, 4).Value.ToString.ToUpper.Contains("AIRPORT") & "%'", dbConn)
+                    cmd = New SqlCommand("SELECT top 1 ISNULL(CONTENTSCODE,'') FROM M_CUSTOMCODESET WHERE CODEDIV = 'LOADING PORT'  AND CONTENTS LIKE '%" & WorksheetCI.Cells(15, 4).Value.ToString.ToUpper & "%'", dbConn)
                     dr = cmd.ExecuteReader
                     If dr.HasRows Then
                         dr.Read()

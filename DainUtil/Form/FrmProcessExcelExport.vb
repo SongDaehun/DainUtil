@@ -79,8 +79,10 @@ Public Class FrmProcessItemExport
                 For i As Integer = 0 To Seqno.Length - 1
                     CIPL_Report(Seqno(i))
                     ProgressBar1.Value = ProgressBar1.Value + 1
-                    lblPercent.Text = ProgressBar1.Value / ProgressBar1.Maximum * 100
+                    lblPercent.Text = (ProgressBar1.Value / ProgressBar1.Maximum * 100).ToString & "%"
                 Next
+
+                MsgBoxInformation("엑셀 출력이 성공했습니다.")
             Case R_ITEM
                 ITEM_Report()
         End Select
@@ -193,6 +195,7 @@ Public Class FrmProcessItemExport
                 If SORT = "" Then SORT = dr("SORT")
                 If INVOICENUMBER = "" Then
                     INVOICENUMBER = dr("INVOICENO")
+                    WorksheetCIPL.Cells(RowNumber, 1).Value = dr("INVOICENO")
                 ElseIf INVOICENUMBER = dr("INVOICENO") Then
                     WorksheetCIPL.Cells(RowNumber, 1).Value = ""
                 Else
@@ -256,8 +259,7 @@ Public Class FrmProcessItemExport
             System.Runtime.InteropServices.Marshal.ReleaseComObject(xExcel)
 
             addlog("엑셀 출력이 성공했습니다.", 3)
-            MsgBoxInformation("엑셀 출력이 성공했습니다.")
-            addlog("[" & FilePath & "] 에 파일이 저장되었습니다.", 3)
+            addlog("[" & G_ReportPath & INVOICENUMBER & ".xls" & "] 에 파일이 저장되었습니다.", 3)
             'txtLog.Text &= vbCrLf & "[" & FilePath & "] 에 파일이 저장되었습니다."
         Catch ex As Exception
             MsgBoxFail("엑셀 출력에 실패했습니다." & vbCrLf & ex.Message)

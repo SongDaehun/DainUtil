@@ -4,7 +4,7 @@ Public Class FrmMain
 
     Private Sub FrmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         'G_IPUser
-        If GetIPUser() = False Then Application.Exit()
+        GetIPUser()
         If DbConnect() = False Then Application.Exit()
         If Interval() = False Then Application.Exit()
         If GetEnv() = False Then Application.Exit()

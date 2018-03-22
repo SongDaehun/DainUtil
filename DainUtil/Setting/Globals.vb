@@ -44,14 +44,19 @@ Module Globals
     Public R_CUSTOMMASTER As Integer = 902
 
 
-    Public Function GetIPUser() As Boolean
+    Public Sub GetIPUser()
         G_IPUser = ""
         Dim hostname As String = Dns.GetHostName()
         Dim adrList As IPAddress() = Dns.GetHostAddresses(hostname)
-        For Each address As IPAddress In adrList
-            G_IPUser = address.ToString()
-        Next
-    End Function
+        Try
+            For Each address As IPAddress In adrList
+                G_IPUser = address.ToString()
+            Next
+        Catch ex As Exception
+            G_IPUser = ""
+        End Try
+
+    End Sub
     Public Function DbConnect() As Boolean
 
         Dim builder_sql As New System.Data.SqlClient.SqlConnectionStringBuilder
