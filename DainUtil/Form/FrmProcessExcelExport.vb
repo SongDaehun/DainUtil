@@ -99,7 +99,9 @@ Public Class FrmProcessItemExport
         Dim RowNumber As Integer = 1
         Dim StartRowNumber As Integer
         Dim INVOICENUMBER As String = ""
+        Dim INVOICENUMBER_adjusted As String = ""
         Dim SORT As String = ""
+        Dim SubHeaderFlag As Boolean = True
         Try
 
             addlog("인보이스 리스트를 추출하고 있습니다.", 3)
@@ -158,10 +160,10 @@ Public Class FrmProcessItemExport
             WorksheetCIPL.Cells(4, 10).Value = "(USD)"
 
             WorksheetCIPL.Cells(3, 11).Value = "N/WEIGHT"
-            WorksheetCIPL.Cells(3, 11).Value = "(USD)"
+            WorksheetCIPL.Cells(4, 11).Value = "(KGS)"
 
             WorksheetCIPL.Cells(3, 12).Value = "G/WEIGHT"
-            WorksheetCIPL.Cells(4, 12).Value = "(USD)"
+            WorksheetCIPL.Cells(4, 12).Value = "(KGS)"
 
             WorksheetCIPL.Cells(4, 13).Value = "포장개수"
             WorksheetCIPL.Cells(4, 14).Value = "신고세번"
@@ -174,12 +176,11 @@ Public Class FrmProcessItemExport
             StartRowNumber = 5
             While dr.Read
 
-
-                If SORT & INVOICENUMBER <> "" And SORT & INVOICENUMBER <> dr("SORT") & dr("INVOICENO") Then
+                If SORT & INVOICENUMBER_adjusted <> "" And SORT & INVOICENUMBER_adjusted <> dr("SORT") & dr("INVOICENO_ADJUST") Then
                     WorksheetCIPL.Range("A" & RowNumber.ToString & ":F" & RowNumber.ToString).Merge()
                     WorksheetCIPL.Cells(RowNumber, 1).Value = "합계"
 
-                    DirectCast(WorksheetCIPL.Range("A" & StartRowNumber & ":A" & RowNumber.ToString), Excel.Range).HorizontalAlignment _
+                    DirectCast(WorksheetCIPL.Range("A" & RowNumber & ":A" & RowNumber.ToString), Excel.Range).HorizontalAlignment _
                              = Excel.XlHAlign.xlHAlignCenter
                     WorksheetCIPL.Cells(RowNumber, 10).Value = "=SUM(J" & StartRowNumber & ":J" & (RowNumber - 1).ToString & ")"
                     WorksheetCIPL.Cells(RowNumber, 11).Value = "=SUM(K" & StartRowNumber & ":K" & (RowNumber - 1).ToString & ")"
@@ -188,18 +189,21 @@ Public Class FrmProcessItemExport
                     RowNumber = RowNumber + 1
                     StartRowNumber = RowNumber
 
-                    INVOICENUMBER = dr("INVOICENO")
+                    INVOICENUMBER_adjusted = dr("INVOICENO_ADJUST")
                     SORT = dr("SORT")
+                    SubHeaderFlag = True
                 End If
 
+                INVOICENUMBER_adjusted = dr("INVOICENO_ADJUST")
+                INVOICENUMBER = dr("INVOICENO")
+
                 If SORT = "" Then SORT = dr("SORT")
-                If INVOICENUMBER = "" Then
-                    INVOICENUMBER = dr("INVOICENO")
-                    WorksheetCIPL.Cells(RowNumber, 1).Value = dr("INVOICENO")
-                ElseIf INVOICENUMBER = dr("INVOICENO") Then
-                    WorksheetCIPL.Cells(RowNumber, 1).Value = ""
-                Else
-                    WorksheetCIPL.Cells(RowNumber, 1).Value = dr("INVOICENO")
+
+                If SubHeaderFlag Then
+                    WorksheetCIPL.Cells(RowNumber, 1).Value = dr("INVOICENO_ADJUST")
+                    DirectCast(WorksheetCIPL.Range("A" & RowNumber.ToString & ":A" & RowNumber.ToString), Excel.Range).HorizontalAlignment _
+                             = Excel.XlHAlign.xlHAlignLeft
+                    SubHeaderFlag = False
                 End If
 
                 WorksheetCIPL.Cells(RowNumber, 2).Value = dr("RANNUMBER")
@@ -231,7 +235,7 @@ Public Class FrmProcessItemExport
             WorksheetCIPL.Range("A" & RowNumber.ToString & ":F" & RowNumber.ToString).Merge()
             WorksheetCIPL.Cells(RowNumber, 1).Value = "합계"
 
-            DirectCast(WorksheetCIPL.Range("A" & StartRowNumber & ":A" & RowNumber.ToString), Excel.Range).HorizontalAlignment _
+            DirectCast(WorksheetCIPL.Range("A" & RowNumber & ":A" & RowNumber.ToString), Excel.Range).HorizontalAlignment _
                              = Excel.XlHAlign.xlHAlignCenter
             WorksheetCIPL.Cells(RowNumber, 10).Value = "=SUM(J" & StartRowNumber & ":J" & (RowNumber - 1).ToString & ")"
             WorksheetCIPL.Cells(RowNumber, 11).Value = "=SUM(K" & StartRowNumber & ":K" & (RowNumber - 1).ToString & ")"
