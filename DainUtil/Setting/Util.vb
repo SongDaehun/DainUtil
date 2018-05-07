@@ -313,4 +313,50 @@ Module Util
             End If
         End Try
     End Function
+
+    Public Function LTrim(ByVal pString As String) As String
+        LTrim = ""
+        Dim ByteCount As Integer = 0
+
+        Try
+            ByteCount = pString.Length
+            For i As Integer = 0 To ByteCount - 1
+                If pString.ToString.Substring(i, 1) <> " " Then
+                    LTrim = pString.ToString.Substring(i, ByteCount - i)
+                    Exit For
+                End If
+            Next
+        Catch ex As Exception
+            LTrim = ""
+        End Try
+
+    End Function
+
+    Public Function ColumnSetLine(ByVal column As String)
+        If column = "" Then
+            Return column
+        Else
+            Return column.Replace("'", "''") & vbCrLf
+        End If
+    End Function
+
+    Public Function RTrim(ByVal pString As String) As String
+        RTrim = ""
+        Dim ByteCount As Integer = 0
+
+        Try
+            ByteCount = pString.Length
+            For i As Integer = ByteCount - 1 To 0 Step -1
+                If pString.ToString.Substring(i, 1) <> " " Then
+                    RTrim = pString.ToString.Substring(0, i + 1)
+                    Exit For
+                End If
+            Next
+        Catch ex As Exception
+            RTrim = ""
+        End Try
+
+    End Function
+
+
 End Module

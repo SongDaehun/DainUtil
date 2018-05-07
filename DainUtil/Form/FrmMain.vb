@@ -10,7 +10,6 @@ Public Class FrmMain
         If GetEnv() = False Then Application.Exit()
         Me.Text = G_APPNAME + "(" + G_Version + ")"
         ClearData()
-
         WriteLog("프로그램실행")
     End Sub
 
