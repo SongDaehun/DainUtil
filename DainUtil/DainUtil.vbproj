@@ -153,6 +153,9 @@
     <Compile Include="Form\FrmProcessTextOutput.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Function\KCP.vb" />
+    <Compile Include="Function\KVPA.vb" />
+    <Compile Include="Function\KVPO.vb" />
     <Compile Include="Setting\Globals.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">

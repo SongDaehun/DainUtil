@@ -78,6 +78,7 @@ Public Class FrmProcessTextOutput
         'Dim CUSDEC830D2 As String   '[수출신고서 차대관리번호내역 - CUSDEC830D2]  4G - 모델규격 단위 기재사항으로 변경
         Dim REPORTSEQNO As String = ""
         Dim INVOICENO As String = ""
+        Dim INVOICETYPE As String = ""
         Dim OUTPUTFILENAME As String
         Dim DataCount As Integer = 0
 
@@ -100,11 +101,12 @@ Public Class FrmProcessTextOutput
                 dr.Close()
                 cmd.Dispose()
 
+                INVOICETYPE = GetInvoiceType(INVOICENO)
+
                 OUTPUTFILENAME = G_TextoutPath & "EXPORT" & "_" & INVOICENO & ".txt"
                 For l As Integer = 0 To 1
-
+                    strSQL = XmlReadVal(GetQueryFullPath, "root/OUTPUT/" & INVOICETYPE & "/CUSDEC830A1")
                     ''데이터 존재 체크
-                    strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/OUTPUT/CUSDEC830A1")
                     strSQL &= gWhere
                     strSQL &= " AND HD.SEQNO = '" & SeqNoTable.Rows(i)("SEQNO") & "'"
                     If l = 0 Then
@@ -132,7 +134,6 @@ Public Class FrmProcessTextOutput
                     If System.IO.File.Exists(OUTPUTFILENAME) Then
                         If OUTPUTFILENAME.Contains("-1.txt") = False Then
                             OUTPUTFILENAME = OUTPUTFILENAME.Replace(INVOICENO, INVOICENO & "-1")
-
                         Else
 
                         End If
@@ -141,27 +142,26 @@ Public Class FrmProcessTextOutput
                     file = My.Computer.FileSystem.OpenTextFileWriter(OUTPUTFILENAME, False, System.Text.Encoding.Default)
 
                     For k As Integer = 0 To 5
+                        strSQL = ""
                         Select Case k
                             Case 1
                                 'CUSDEC830B1
-                                strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/OUTPUT/CUSDEC830B1")
+                                strSQL = XmlReadVal(GetQueryFullPath, "root/OUTPUT/" & INVOICETYPE & "/CUSDEC830B1")
                             Case 2
                                 'CUSDEC830B5 - 보고 안함
                                 'strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/CUSDEC830B5")
-                                strSQL = ""
                             Case 3
                                 'CUSDEC830C1
-                                strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/OUTPUT/CUSDEC830C1")
+                                strSQL = XmlReadVal(GetQueryFullPath, "root/OUTPUT/" & INVOICETYPE & "/CUSDEC830C1")
                             Case 4
                                 'CUSDEC830D1
-                                strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/OUTPUT/CUSDEC830D1")
+                                strSQL = XmlReadVal(GetQueryFullPath, "root/OUTPUT/" & INVOICETYPE & "/CUSDEC830D1")
                             Case 5
                                 'CUSDEC830D2 - 보고안함
                                 'strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/CUSDEC830D2")
-                                strSQL = ""
                             Case Else
                                 'CUSDEC830A1'
-                                strSQL = XmlReadVal((DirYenFix(Application.StartupPath) & gsXmlQuery), "root/OUTPUT/CUSDEC830A1")
+                                strSQL = XmlReadVal(GetQueryFullPath, "root/OUTPUT/" & INVOICETYPE & "/CUSDEC830A1")
                         End Select
 
                         If strSQL <> "" Then
@@ -198,9 +198,17 @@ Public Class FrmProcessTextOutput
                                     End If
                             End Select
 
+                            'ORDER BY
+                            Select Case k
+                                Case 1
+                                    strSQL &= " ORDER BY RANNUMBER "
+                                Case Else
+                                    strSQL &= " ORDER BY HD.SEQNO,DD.SEQNO"
+                            End Select
 
+                            'ORDER BY
 
-                            strSQL &= " ORDER BY HD.SEQNO,DD.SEQNO"
+                            'strSQL &= " ORDER BY RANNUMBER"
                             WriteLog(strSQL, W)
                             cmd = New SqlCommand(strSQL, dbConn)
                             dr = cmd.ExecuteReader

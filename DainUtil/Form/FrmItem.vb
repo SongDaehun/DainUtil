@@ -338,7 +338,7 @@ Public Class FrmItem
         Dim i As Integer = 0
         Dim txn As SqlTransaction = dbConn.BeginTransaction
         Try
-        cmd.Transaction = txn
+            cmd.Transaction = txn
 
             strSQL = " DELETE FROM M_ITEM "
             cmd.CommandText = strSQL
@@ -403,7 +403,7 @@ Public Class FrmItem
         SaveFileDialog1.FileName = ""
         SaveFileDialog1.Filter = "엑셀파일(*.xls;*.xlsx)|*.xls;*.xlsx"
         SaveFileDialog1.ShowDialog()
-        Dim sForm As New FrmProcessItemExport(R_ITEM)
+        Dim sForm As New FrmProcessItemExport(R_ITEM, SaveFileDialog1.FileName)
         sForm.ShowDialog()
     End Sub
 
@@ -426,7 +426,11 @@ Public Class FrmItem
         setdetail()
     End Sub
 
-    Private Sub DataGridView1_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellContentClick
+    Private Sub DataGridView1_DataError(sender As Object, e As DataGridViewDataErrorEventArgs) Handles DataGridView1.DataError
+        Try
 
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
     End Sub
 End Class

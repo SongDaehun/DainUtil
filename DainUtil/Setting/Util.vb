@@ -358,5 +358,13 @@ Module Util
 
     End Function
 
+    Public Function GetInvoiceType(ByVal InvoiceNo As String) As String
+        If IsNumeric(InvoiceNo.Substring(3, 1)) Then
+            Return InvoiceNo.Substring(0, 3)
+        Else
+            Return InvoiceNo.Substring(0, 4)
+        End If
+    End Function
+
 
 End Module

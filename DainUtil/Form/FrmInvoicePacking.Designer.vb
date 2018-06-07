@@ -22,11 +22,10 @@ Partial Class FrmInvoicePacking
     '코드 편집기에서는 수정하지 마세요.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim Office2010Green1 As DainUtil.ManiX.Office2010Green = New DainUtil.ManiX.Office2010Green()
         Dim Office2010Yellow1 As DainUtil.ManiX.Office2010Yellow = New DainUtil.ManiX.Office2010Yellow()
+        Dim Office2010Green1 As DainUtil.ManiX.Office2010Green = New DainUtil.ManiX.Office2010Green()
         Dim Office2010Blue1 As DainUtil.ManiX.Office2010Blue = New DainUtil.ManiX.Office2010Blue()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
-        Me.btnSearch = New DainUtil.ManiX.XButton()
         Me.txtSearch103 = New System.Windows.Forms.TextBox()
         Me.txtSearch102 = New System.Windows.Forms.TextBox()
         Me.txtSearch101 = New System.Windows.Forms.TextBox()
@@ -37,6 +36,7 @@ Partial Class FrmInvoicePacking
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.btnPrint = New DainUtil.ManiX.XButton()
+        Me.btnSearch = New DainUtil.ManiX.XButton()
         Me.btnDelete = New DainUtil.ManiX.XButton()
         Me.btnUpdate = New DainUtil.ManiX.XButton()
         Me.btnClose = New DainUtil.ManiX.XButton()
@@ -61,34 +61,6 @@ Partial Class FrmInvoicePacking
         Me.GroupBox1.TabIndex = 0
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "검색조건"
-        '
-        'btnSearch
-        '
-        Office2010Green1.BorderColor1 = System.Drawing.Color.FromArgb(CType(CType(31, Byte), Integer), CType(CType(72, Byte), Integer), CType(CType(161, Byte), Integer))
-        Office2010Green1.BorderColor2 = System.Drawing.Color.FromArgb(CType(CType(68, Byte), Integer), CType(CType(135, Byte), Integer), CType(CType(228, Byte), Integer))
-        Office2010Green1.ButtonMouseOverColor1 = System.Drawing.Color.FromArgb(CType(CType(236, Byte), Integer), CType(CType(199, Byte), Integer), CType(CType(87, Byte), Integer))
-        Office2010Green1.ButtonMouseOverColor2 = System.Drawing.Color.FromArgb(CType(CType(252, Byte), Integer), CType(CType(243, Byte), Integer), CType(CType(215, Byte), Integer))
-        Office2010Green1.ButtonMouseOverColor3 = System.Drawing.Color.FromArgb(CType(CType(249, Byte), Integer), CType(CType(225, Byte), Integer), CType(CType(137, Byte), Integer))
-        Office2010Green1.ButtonMouseOverColor4 = System.Drawing.Color.FromArgb(CType(CType(251, Byte), Integer), CType(CType(249, Byte), Integer), CType(CType(224, Byte), Integer))
-        Office2010Green1.ButtonNormalColor1 = System.Drawing.Color.FromArgb(CType(CType(42, Byte), Integer), CType(CType(126, Byte), Integer), CType(CType(43, Byte), Integer))
-        Office2010Green1.ButtonNormalColor2 = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(184, Byte), Integer), CType(CType(67, Byte), Integer))
-        Office2010Green1.ButtonNormalColor3 = System.Drawing.Color.FromArgb(CType(CType(42, Byte), Integer), CType(CType(126, Byte), Integer), CType(CType(43, Byte), Integer))
-        Office2010Green1.ButtonNormalColor4 = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(184, Byte), Integer), CType(CType(67, Byte), Integer))
-        Office2010Green1.ButtonSelectedColor1 = System.Drawing.Color.FromArgb(CType(CType(236, Byte), Integer), CType(CType(199, Byte), Integer), CType(CType(87, Byte), Integer))
-        Office2010Green1.ButtonSelectedColor2 = System.Drawing.Color.FromArgb(CType(CType(252, Byte), Integer), CType(CType(243, Byte), Integer), CType(CType(215, Byte), Integer))
-        Office2010Green1.ButtonSelectedColor3 = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(117, Byte), Integer))
-        Office2010Green1.ButtonSelectedColor4 = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(216, Byte), Integer), CType(CType(107, Byte), Integer))
-        Office2010Green1.HoverTextColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(57, Byte), Integer), CType(CType(91, Byte), Integer))
-        Office2010Green1.SelectedTextColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(57, Byte), Integer), CType(CType(91, Byte), Integer))
-        Office2010Green1.TextColor = System.Drawing.Color.White
-        Me.btnSearch.ColorTable = Office2010Green1
-        Me.btnSearch.Location = New System.Drawing.Point(368, 18)
-        Me.btnSearch.Name = "btnSearch"
-        Me.btnSearch.Size = New System.Drawing.Size(55, 75)
-        Me.btnSearch.TabIndex = 6
-        Me.btnSearch.Text = "검색"
-        Me.btnSearch.Theme = DainUtil.ManiX.Theme.MSOffice2010_Green
-        Me.btnSearch.UseVisualStyleBackColor = True
         '
         'txtSearch103
         '
@@ -146,13 +118,17 @@ Partial Class FrmInvoicePacking
         Me.DataGridView1.AllowUserToAddRows = False
         Me.DataGridView1.AllowUserToDeleteRows = False
         Me.DataGridView1.AllowUserToOrderColumns = True
+        Me.DataGridView1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.DataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.DataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
         Me.DataGridView1.Location = New System.Drawing.Point(6, 146)
         Me.DataGridView1.Name = "DataGridView1"
         Me.DataGridView1.ReadOnly = True
         Me.DataGridView1.RowHeadersVisible = False
         Me.DataGridView1.RowTemplate.Height = 23
-        Me.DataGridView1.Size = New System.Drawing.Size(977, 495)
+        Me.DataGridView1.Size = New System.Drawing.Size(1024, 539)
         Me.DataGridView1.TabIndex = 1
         '
         'TabControl1
@@ -164,7 +140,7 @@ Partial Class FrmInvoicePacking
         Me.TabControl1.Location = New System.Drawing.Point(0, 0)
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
-        Me.TabControl1.Size = New System.Drawing.Size(1004, 682)
+        Me.TabControl1.Size = New System.Drawing.Size(1046, 722)
         Me.TabControl1.TabIndex = 5
         '
         'TabPage1
@@ -181,7 +157,7 @@ Partial Class FrmInvoicePacking
         Me.TabPage1.Location = New System.Drawing.Point(4, 25)
         Me.TabPage1.Name = "TabPage1"
         Me.TabPage1.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage1.Size = New System.Drawing.Size(996, 653)
+        Me.TabPage1.Size = New System.Drawing.Size(1038, 693)
         Me.TabPage1.TabIndex = 0
         Me.TabPage1.Text = "Commercial Invoice"
         '
@@ -214,8 +190,37 @@ Partial Class FrmInvoicePacking
         Me.btnPrint.Theme = DainUtil.ManiX.Theme.MSOffice2010_Yellow
         Me.btnPrint.UseVisualStyleBackColor = True
         '
+        'btnSearch
+        '
+        Office2010Green1.BorderColor1 = System.Drawing.Color.FromArgb(CType(CType(31, Byte), Integer), CType(CType(72, Byte), Integer), CType(CType(161, Byte), Integer))
+        Office2010Green1.BorderColor2 = System.Drawing.Color.FromArgb(CType(CType(68, Byte), Integer), CType(CType(135, Byte), Integer), CType(CType(228, Byte), Integer))
+        Office2010Green1.ButtonMouseOverColor1 = System.Drawing.Color.FromArgb(CType(CType(236, Byte), Integer), CType(CType(199, Byte), Integer), CType(CType(87, Byte), Integer))
+        Office2010Green1.ButtonMouseOverColor2 = System.Drawing.Color.FromArgb(CType(CType(252, Byte), Integer), CType(CType(243, Byte), Integer), CType(CType(215, Byte), Integer))
+        Office2010Green1.ButtonMouseOverColor3 = System.Drawing.Color.FromArgb(CType(CType(249, Byte), Integer), CType(CType(225, Byte), Integer), CType(CType(137, Byte), Integer))
+        Office2010Green1.ButtonMouseOverColor4 = System.Drawing.Color.FromArgb(CType(CType(251, Byte), Integer), CType(CType(249, Byte), Integer), CType(CType(224, Byte), Integer))
+        Office2010Green1.ButtonNormalColor1 = System.Drawing.Color.FromArgb(CType(CType(42, Byte), Integer), CType(CType(126, Byte), Integer), CType(CType(43, Byte), Integer))
+        Office2010Green1.ButtonNormalColor2 = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(184, Byte), Integer), CType(CType(67, Byte), Integer))
+        Office2010Green1.ButtonNormalColor3 = System.Drawing.Color.FromArgb(CType(CType(42, Byte), Integer), CType(CType(126, Byte), Integer), CType(CType(43, Byte), Integer))
+        Office2010Green1.ButtonNormalColor4 = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(184, Byte), Integer), CType(CType(67, Byte), Integer))
+        Office2010Green1.ButtonSelectedColor1 = System.Drawing.Color.FromArgb(CType(CType(236, Byte), Integer), CType(CType(199, Byte), Integer), CType(CType(87, Byte), Integer))
+        Office2010Green1.ButtonSelectedColor2 = System.Drawing.Color.FromArgb(CType(CType(252, Byte), Integer), CType(CType(243, Byte), Integer), CType(CType(215, Byte), Integer))
+        Office2010Green1.ButtonSelectedColor3 = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(117, Byte), Integer))
+        Office2010Green1.ButtonSelectedColor4 = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(216, Byte), Integer), CType(CType(107, Byte), Integer))
+        Office2010Green1.HoverTextColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(57, Byte), Integer), CType(CType(91, Byte), Integer))
+        Office2010Green1.SelectedTextColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(57, Byte), Integer), CType(CType(91, Byte), Integer))
+        Office2010Green1.TextColor = System.Drawing.Color.White
+        Me.btnSearch.ColorTable = Office2010Green1
+        Me.btnSearch.Location = New System.Drawing.Point(368, 18)
+        Me.btnSearch.Name = "btnSearch"
+        Me.btnSearch.Size = New System.Drawing.Size(55, 75)
+        Me.btnSearch.TabIndex = 6
+        Me.btnSearch.Text = "검색"
+        Me.btnSearch.Theme = DainUtil.ManiX.Theme.MSOffice2010_Green
+        Me.btnSearch.UseVisualStyleBackColor = True
+        '
         'btnDelete
         '
+        Me.btnDelete.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Office2010Blue1.BorderColor1 = System.Drawing.Color.FromArgb(CType(CType(31, Byte), Integer), CType(CType(72, Byte), Integer), CType(CType(161, Byte), Integer))
         Office2010Blue1.BorderColor2 = System.Drawing.Color.FromArgb(CType(CType(68, Byte), Integer), CType(CType(135, Byte), Integer), CType(CType(228, Byte), Integer))
         Office2010Blue1.ButtonMouseOverColor1 = System.Drawing.Color.FromArgb(CType(CType(236, Byte), Integer), CType(CType(199, Byte), Integer), CType(CType(87, Byte), Integer))
@@ -235,8 +240,9 @@ Partial Class FrmInvoicePacking
         Office2010Blue1.TextColor = System.Drawing.Color.White
         Me.btnDelete.ColorTable = Office2010Blue1
         Me.btnDelete.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnDelete.Location = New System.Drawing.Point(832, 7)
+        Me.btnDelete.Location = New System.Drawing.Point(872, 7)
         Me.btnDelete.Name = "btnDelete"
+        Me.btnDelete.RightToLeft = System.Windows.Forms.RightToLeft.Yes
         Me.btnDelete.Size = New System.Drawing.Size(75, 23)
         Me.btnDelete.TabIndex = 4
         Me.btnDelete.Text = "삭제"
@@ -245,10 +251,12 @@ Partial Class FrmInvoicePacking
         '
         'btnUpdate
         '
+        Me.btnUpdate.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btnUpdate.ColorTable = Office2010Blue1
         Me.btnUpdate.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnUpdate.Location = New System.Drawing.Point(751, 7)
+        Me.btnUpdate.Location = New System.Drawing.Point(791, 7)
         Me.btnUpdate.Name = "btnUpdate"
+        Me.btnUpdate.RightToLeft = System.Windows.Forms.RightToLeft.Yes
         Me.btnUpdate.Size = New System.Drawing.Size(75, 23)
         Me.btnUpdate.TabIndex = 3
         Me.btnUpdate.Text = "저장"
@@ -258,10 +266,12 @@ Partial Class FrmInvoicePacking
         '
         'btnClose
         '
+        Me.btnClose.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btnClose.ColorTable = Office2010Blue1
         Me.btnClose.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnClose.Location = New System.Drawing.Point(913, 7)
+        Me.btnClose.Location = New System.Drawing.Point(953, 7)
         Me.btnClose.Name = "btnClose"
+        Me.btnClose.RightToLeft = System.Windows.Forms.RightToLeft.Yes
         Me.btnClose.Size = New System.Drawing.Size(75, 23)
         Me.btnClose.TabIndex = 2
         Me.btnClose.Text = "종료"
@@ -272,11 +282,10 @@ Partial Class FrmInvoicePacking
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1004, 682)
+        Me.AutoScroll = True
+        Me.AutoScrollMinSize = New System.Drawing.Size(1020, 720)
+        Me.ClientSize = New System.Drawing.Size(1046, 722)
         Me.Controls.Add(Me.TabControl1)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
-        Me.MaximizeBox = False
-        Me.MinimizeBox = False
         Me.Name = "FrmInvoicePacking"
         Me.ShowIcon = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent

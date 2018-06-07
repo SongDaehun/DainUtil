@@ -14,6 +14,7 @@ Module Globals
     'Public G_DBPath As String = G_APPPath + "\db\dain.accdb"
 
     Public Const gsXmlSetting As String = "SET.xml"                     '設定ﾌｧｲﾙ(得意先個別)
+
     Public Const gsXmlQuery As String = "QUERY.xml"
     Public iHostName As String = ""            'ｻｰﾊﾞ名
     Public iDataBaseName As String = ""        'DB名
@@ -43,6 +44,8 @@ Module Globals
     Public R_STNDARDMASTER As Integer = 900
     Public R_CUSTOMMASTER As Integer = 902
 
+    Public ProccessExcelImport As FrmProcessExcelImport = New FrmProcessExcelImport
+
 
     Public Sub GetIPUser()
         G_IPUser = ""
@@ -68,7 +71,7 @@ Module Globals
             End If
 
             If System.IO.File.Exists(DirYenFix(Application.StartupPath) & gsXmlSetting) = False Then
-                MsgBoxFail("설정파일이 없습니다." & System.IO.File.Exists(DirYenFix(Application.StartupPath) & gsXmlQuery) & " 이 존재하는지 확인해주세요.")
+                MsgBoxFail("설정파일이 없습니다." & System.IO.File.Exists(GetQueryFullPath) & " 이 존재하는지 확인해주세요.")
                 Application.Exit()
             End If
 
@@ -154,6 +157,14 @@ CType(Attribute.GetCustomAttribute(
             dr.Close()
             cmd.Dispose()
         End Try
+    End Function
+
+    Public Function GetQueryFullPath()
+        If Debugger.IsAttached Then
+            Return DirYenFix(G_APPPath) & "../../initial/" & gsXmlQuery
+        Else
+            Return DirYenFix(G_APPPath) & gsXmlQuery
+        End If
     End Function
 
 End Module

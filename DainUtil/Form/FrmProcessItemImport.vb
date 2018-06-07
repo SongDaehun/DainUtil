@@ -64,7 +64,8 @@ Public Class FrmProcessItemImport
     Private Sub FrmProcessItemImport_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         Dim strSQL As String
         Dim cmd As SqlCommand
-
+        Dim dr As SqlDataReader
+        Dim Partno_Exist As String = ""
 
         Dim Excel As Excel.Application = New Excel.Application
         Dim Workbook As Excel.Workbook
@@ -74,10 +75,18 @@ Public Class FrmProcessItemImport
 
         Try
 
-            strSQL = " DELETE FROM M_ITEM"
+            strSQL = " CREATE TABLE W_M_ITEM( "
+            strSQL &= " SEQNO BIGINT NOT NULL"
+            strSQL &= " ,PARTNO NVARCHAR(20) Not NULL"
+            strSQL &= " ,PARTNAME NVARCHAR(255) "
+            strSQL &= " ,HSCODE NVARCHAR(20) "
+            strSQL &= " ,PRODUCT  NVARCHAR(255) "
+            strSQL &= " ,CONVENTIONCODE NVARCHAR(100) "
+            strSQL &= " ,STANDARDPARTNAME NVARCHAR(255) "
+            strSQL &= " ,TRADEPARTNAME NVARCHAR(255) "
+            strSQL &= " ) "
             cmd = New SqlCommand(strSQL, dbConn)
             cmd.ExecuteNonQuery()
-            addlog("상품마스터를 초기화했습니다.", 3)
 
             Excel = New Excel.Application
             Workbook = Excel.Workbooks.Open(FilePath)
@@ -93,7 +102,7 @@ Public Class FrmProcessItemImport
 
             While WorksheetMITEM.Cells(i, 1).Value IsNot Nothing
                 SeqNO = SeqNO + 1
-                strSQL = "INSERT INTO M_ITEM VALUES( "
+                strSQL = "INSERT INTO W_M_ITEM VALUES( "
                 strSQL &= " '" & SeqNO & "'"
                 strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 1).Value).ToUpper
                 strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 2).Value).ToUpper
@@ -115,10 +124,42 @@ Public Class FrmProcessItemImport
             Workbook.Close(False)
             Excel.Quit()
 
-            strSQL = " UPDATE M_ITEM SET CONVENTIONCODE = '해당없음' WHERE CONVENTIONCODE = '' "
+            strSQL = " SELECT X.* FROM (SELECT  PARTNO, COUNT(*) AS COUNT FROM W_M_ITEM GROUP BY PARTNO) X WHERE X.PARTNO > 1 "
+            cmd = New SqlCommand(strSQL, dbConn)
+            dr = cmd.ExecuteReader
+            While dr.Read
+                If Partno_Exist <> "" Then
+                    Partno_Exist &= vbCrLf
+                End If
+                Partno_Exist &= dr("PARTNO")
+            End While
+            dr.Close()
+            cmd.Dispose()
+
+            If Partno_Exist <> "" Then
+                addlog(" 아래의  Partno가 중복되어 임포트에 실패했습니다. " & vbCrLf & Partno_Exist, 2)
+                Exit Sub
+            End If
+
+
+            strSQL = " UPDATE W_M_ITEM SET CONVENTIONCODE = '해당없음' WHERE CONVENTIONCODE = '' "
             cmd = New SqlCommand(strSQL, dbConn)
             cmd.ExecuteNonQuery()
             cmd.Dispose()
+
+            strSQL = " DELETE FROM M_ITEM"
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            addlog("상품마스터를 초기화했습니다.", 3)
+
+            strSQL = " INSERT INTO M_ITEM SELECT * FROM W_M_ITEM "
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
+            addlog("상품마스터를 반영처리했습니다. .", 3)
+
+            strSQL = " DROP TABLE W_M_ITEM "
+            cmd = New SqlCommand(strSQL, dbConn)
+            cmd.ExecuteNonQuery()
 
             MsgBoxInformation("엑셀 임포트가 성공했습니다.")
             addlog("엑셀 임포트가 성공했습니다.", 3)

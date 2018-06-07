@@ -19,13 +19,11 @@ Public Class FrmMain
         sform.ShowDialog()
         Me.Refresh()
     End Sub
-
-    Private Sub btnExcelImport_Click(sender As Object, e As EventArgs) Handles btnExcelImport.Click
+    Public Sub btnExcelImport_Click(sender As Object, e As EventArgs) Handles btnExcelImport.Click
 
         If MsgBoxConfirm("엑셀파일을 임포트 하시겠습니까?") = DialogResult.Yes Then
-            Dim sform As Form
-            sform = New FrmProcessExcelImport
-            sform.ShowDialog()
+            ProccessExcelImport = New FrmProcessExcelImport
+            ProccessExcelImport.ShowDialog()
             Me.Refresh()
         End If
     End Sub

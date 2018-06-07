@@ -3541,11 +3541,62 @@ Module Initial
                 cmd.Dispose()
             End If
 
+            If vmenteStep < 22 Then
+                strSQL = " ALTER TABLE D_CIPL_D ALTER COLUMN PACKAGEAMOUNT DECIMAL(5,2)"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " ALTER TABLE W_CIPL_D ALTER COLUMN PACKAGEAMOUNT DECIMAL(5,2)"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "UPDATE F_GENENV Set MENTESTEP = '22'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+            If vmenteStep < 23 Then
+                strSQL = "INSERT INTO M_CUSTOMCODESET VALUES('LOADING PORT','020','INCHEON SEAPORT',NULL,NULL)"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = "UPDATE F_GENENV Set MENTESTEP = '23'"
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+            If vmenteStep < 24 Then
+                strSQL = " ALTER TABLE D_CIPL_D ADD VENDER NVARCHAR(255) "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " DROP TABLE W_CIPL_D "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " SELECT * INTO W_CIPL_D FROM D_CIPL_D WHERE 1 = 0 "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+                strSQL = " UPDATE F_GENENV Set MENTESTEP = '24' "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
             Return True
         Catch ex As Exception
             MsgBoxFail(ex.Message)
             Return False
         End Try
+
 
 
 
