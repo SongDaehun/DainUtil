@@ -357,14 +357,77 @@ Module Util
         End Try
 
     End Function
-
-    Public Function GetInvoiceType(ByVal InvoiceNo As String) As String
-        If IsNumeric(InvoiceNo.Substring(3, 1)) Then
-            Return InvoiceNo.Substring(0, 3)
+    Public Function GetInvoiceTypeFromFile(ByVal FileName As String) As String
+        Dim strSQL As String
+        Dim dr As SqlDataReader
+        Dim cmd As SqlCommand
+        strSQL = " SELECT TOP 1 * FROM M_CUSTOMCODESET "
+        strSQL &= " WHERE CODEDIV = 'INVOICEIMPORT' "
+        strSQL &= " AND '" & FileName & "' LIKE '%' + CONTENTSCODE + '%' "
+        cmd = New SqlCommand(strSQL, dbConn)
+        dr = cmd.ExecuteReader
+        If dr.HasRows Then
+            dr.Read()
+            GetInvoiceTypeFromFile = dr("REFERENCE")
         Else
-            Return InvoiceNo.Substring(0, 4)
+            GetInvoiceTypeFromFile = "KCP"
         End If
+        dr.Close()
+        cmd.Dispose()
     End Function
 
+    Public Function GetInvoiceType(ByVal InvoiceNo As String) As String
+        Dim strSQL As String
+        Dim dr As SqlDataReader
+        Dim cmd As SqlCommand
+
+        If IsNumeric(InvoiceNo.Substring(3, 1)) Then
+            GetInvoiceType = InvoiceNo.Substring(0, 3)
+        Else
+            GetInvoiceType = InvoiceNo.Substring(0, 4)
+        End If
+
+        strSQL = "SELECT * FROM M_CUSTOMCODESET WHERE CODEDIV = 'INVOICEIMPORT' AND CONTENTSCODE = '" & GetInvoiceType & "'"
+        cmd = New SqlCommand(strSQL, dbConn)
+        dr = cmd.ExecuteReader
+        If dr.HasRows Then
+            dr.Read()
+            GetInvoiceType = dr("REFERENCE")
+        Else
+            GetInvoiceType = "KCP"
+        End If
+        dr.Close()
+        cmd.Dispose()
+
+        'Select Case True
+        '    Case GetInvoiceType.Substring(0.3) = "KCP"
+        '        GetInvoiceType = "KCP"
+        '    Case GetInvoiceType = "KVPA"
+        '        GetInvoiceType = "KVPA"
+        '    Case GetInvoiceType = "KVPO"
+        '        GetInvoiceType = "KVPO"
+        '    Case Else
+        '        GetInvoiceType = "KCP"
+        'End Select
+
+    End Function
+
+
+
+    Public Sub ExcelProcessKill()
+        Dim excelProcess() As System.Diagnostics.Process = System.Diagnostics.Process.GetProcessesByName("EXCEL")
+        Try
+            If excelProcess.Length > 0 Then
+                For i As Integer = 0 To excelProcess.Length - 1
+                    If excelProcess(i).MainWindowTitle = "" Then
+                        excelProcess(i).Kill()
+                    End If
+                Next
+            End If
+        Catch ex As Exception
+
+        End Try
+
+    End Sub
 
 End Module

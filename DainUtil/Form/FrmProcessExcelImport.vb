@@ -114,29 +114,38 @@ Public Class FrmProcessExcelImport
             txtLog.Text &= vbCrLf & "** " & Importfiles(i) & "의 처리를 시작합니다. **"
             txtLog.Text &= vbCrLf & "***************************************************"
 
-            Select Case True
-                Case Importfiles(i).ToUpper.Contains("KVPO") And Importfiles(i).ToUpper.Contains("~$") = False
-                    If ImportKVPO_CI(Importfiles(i)) Then
-                        SuccessCount = SuccessCount + 1
-                    Else
-                        FailCount = FailCount + 1
-                        ImportFailFile &= Importfiles(i)
-                    End If
-                Case Importfiles(i).ToUpper.Contains("KVPA") And Importfiles(i).ToUpper.Contains("~$") = False
-                    If ImportKVPO_CI(Importfiles(i)) Then
-                        SuccessCount = SuccessCount + 1
-                    Else
-                        FailCount = FailCount + 1
-                        ImportFailFile &= Importfiles(i)
-                    End If
-                Case Importfiles(i).ToUpper.Contains("KCP") And Importfiles(i).ToUpper.Contains("~$") = False
-                    If ImportKCP_CI(Importfiles(i)) Then
-                        SuccessCount = SuccessCount + 1
-                    Else
-                        FailCount = FailCount + 1
-                        ImportFailFile &= Importfiles(i)
-                    End If
-            End Select
+            If Importfiles(i).ToUpper.Contains("~$") = False Then
+                Select Case GetInvoiceTypeFromFile(Importfiles(i).ToUpper)
+                    Case "KVPO"
+                        If ImportKVPO_CI(Importfiles(i)) Then
+                            SuccessCount = SuccessCount + 1
+                        Else
+                            FailCount = FailCount + 1
+                            ImportFailFile &= Importfiles(i)
+                        End If
+                    Case "KVPA"
+                        If ImportKVPO_CI(Importfiles(i)) Then
+                            SuccessCount = SuccessCount + 1
+                        Else
+                            FailCount = FailCount + 1
+                            ImportFailFile &= Importfiles(i)
+                        End If
+                    Case "KCP"
+                        If ImportKCP_CI(Importfiles(i)) Then
+                            SuccessCount = SuccessCount + 1
+                        Else
+                            FailCount = FailCount + 1
+                            ImportFailFile &= Importfiles(i)
+                        End If
+                    Case Else
+                        If ImportKCP_CI(Importfiles(i)) Then
+                            SuccessCount = SuccessCount + 1
+                        Else
+                            FailCount = FailCount + 1
+                            ImportFailFile &= Importfiles(i)
+                        End If
+                End Select
+            End If
 
             If ProgressBar1.Value + 1 <= ProgressBar1.Maximum Then
                 ProgressBar1.Value = ProgressBar1.Value + 1
@@ -144,6 +153,8 @@ Public Class FrmProcessExcelImport
             lblPercent.Text = CInt(ProgressBar1.Value / ProgressBar1.Maximum * 100).ToString & "%"
 
         Next
+
+        ExcelProcessKill()
 
         If FailCount > 0 Then
             '[알림]임포트를 완료했습니다. (성공1건/1건)

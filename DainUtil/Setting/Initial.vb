@@ -3591,6 +3591,48 @@ Module Initial
                 cmd.Dispose()
             End If
 
+            If vmenteStep < 25 Then
+                strSQL = " INSERT INTO M_CUSTOMCODESET VALUES('INVOICEIMPORT','KCP','중국','','KCP') "
+                strSQL &= " INSERT INTO M_CUSTOMCODESET VALUES('INVOICEIMPORT','KCPO','중국','','KCP') "
+                strSQL &= " INSERT INTO M_CUSTOMCODESET VALUES('INVOICEIMPORT','KCPA','중국','','KCP') "
+                strSQL &= " INSERT INTO M_CUSTOMCODESET VALUES('INVOICEIMPORT','KASA','중국','','KCP') "
+                strSQL &= " INSERT INTO M_CUSTOMCODESET VALUES('INVOICEIMPORT','KVPO','베트남','','KVPO') "
+                strSQL &= " INSERT INTO M_CUSTOMCODESET VALUES('INVOICEIMPORT','KVPA','베트남','','KVPA') "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " UPDATE F_GENENV Set MENTESTEP = '25' "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+            If vmenteStep < 26 Then
+                strSQL &= " INSERT INTO M_CUSTOMCODENAME VALUES('INVOICEIMPORT','') "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " UPDATE F_GENENV Set MENTESTEP = '26' "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+            If vmenteStep < 27 Then
+                strSQL = " IF NOT EXISTS (SELECT * FROM F_LISTOUTITEM WHERE MESSAGEID = '901' AND COLUMNNAME = 'SEQNO' AND INDICATIONORDER = '8') "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES ('901','H','SEQNO','연번','80','0','8','0','0','')  "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " UPDATE F_GENENV Set MENTESTEP = '27' "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
             Return True
         Catch ex As Exception
             MsgBoxFail(ex.Message)

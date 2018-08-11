@@ -541,7 +541,7 @@ Module KVPA
                         'PL_SUPPLIERCODE NVARCHAR(10) 
                         strSQL &= ",'' "
                         'PL_PUN NVARCHAR(5) 
-                        strSQL &= ",'' "
+                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 5).Value.ToString.ToUpper.Replace("PCS", "PC"))
                         'PL_CBM NVARCHAR(10) 
                         strSQL &= ",'' "
                         'PL_QTY Decimal(14'0) 

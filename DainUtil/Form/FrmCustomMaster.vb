@@ -174,11 +174,17 @@ Public Class FrmCustomMaster
     Private Sub btnDelete_Click(sender As Object, e As EventArgs) Handles btnDelete.Click
         Me.Focus()
         Dim Count As Integer
+        Dim cmd As SqlCommand
+        Dim strSQL As String = ""
 
         Try
 
             For i As Integer = 0 To DataGridView1.Rows.Count + RowCountAdjust - 1
                 If DataGridView1.Rows(i).Cells(0).Value Then
+                    strSQL = " DELETE FROM M_ITEM WHERE SEQNO = '" & DataGridView1.Rows(i).Cells(DataGridView1.Columns.Count - 1).Value & "'"
+                    cmd = New SqlCommand(strSQL, dbConn)
+                    cmd.ExecuteNonQuery()
+                    cmd.Dispose()
                     DataGridView1.Rows.RemoveAt(i)
                     Count = Count + 1
                 End If

@@ -43,7 +43,8 @@ Module KVPO
 
             FailMessage = ""
             ProccessExcelImport.addlog("상품마스터의 자릿수를 체크합니다.", 0)
-            strSQL = "SELECT HSCODE FROM M_ITEM WHERE LEN(HSCODE ) <> 10 "
+            strSQL = "SELECT * FROM M_ITEM WHERE LEN(HSCODE ) <> 10 "
+            'strSQL = "SELECT HSCODE FROM M_ITEM WHERE LEN(HSCODE ) <> 10 "
             cmd = New SqlCommand(strSQL, dbConn)
             dr = cmd.ExecuteReader()
             While dr.Read()
@@ -518,18 +519,18 @@ Module KVPO
                         'CI_KGS Decimal(14,1) 
                         strSQL &= ",'0.0'"
                         'CI_UPRICE_USD Decimal(14,2)
-                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 9).Value)
+                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 8).Value)
                         'CI_AMOUNT_USD Decimal(14,2) 
-                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 10).Value)
+                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 9).Value)
 
                         'PL_SUPPLIERCODE NVARCHAR(10) 
                         strSQL &= ",'' "
                         'PL_PUN NVARCHAR(5) 
-                        strSQL &= ",'' "
+                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 5).Value.ToString.ToUpper.Replace("PCS", "PC"))
                         'PL_CBM NVARCHAR(10) 
                         strSQL &= ",'' "
                         'PL_QTY Decimal(14'0) 
-                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 7).Value)
+                        strSQL &= ",'0' "
                         'PL_NWEIGHTKGS Decimal(14,2) 
                         strSQL &= ",NULL "
                         'PL_GWEIGHTKGS Decimal(14,2) 
@@ -580,56 +581,31 @@ Module KVPO
                         'While WorksheetCI.Cells(iRow, 2).Value IsNot Nothing Or WorksheetCI.Cells(iRow, 2).Value <> ""
                         If WorksheetCI.Cells(eRowNumber, 2).Value = "0" Then Exit While
                         strSQL = "INSERT INTO " & W_CIPL_D & " VALUES("
-                        'SEQNO BIGINT  Not NULL 
-                        strSQL &= "'" & RowNumber.ToString & "'"
-                        'DETAILSEQNO INT NOT NULL
-                        'strSQL &= ",'" & (detailCount + detailCount_adjust + 1).ToString & "'"
-                        strSQL &= ",'" & detailCount & "'"
-                        'ORIGINALDETAILSEQNO INT NOT NULL
-                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 1).Value)
-                        'CONVENTIONCODE NVARCHAR(100) 
-                        strSQL &= "," & GetConventionCode(WorksheetCI.Cells(eRowNumber, 2).Value)
-                        'RANNUMBER NVARCHAR(3) 
-                        strSQL &= ",NULL"                       'RANNUMBER
-                        'RANDETAILNUMBER NVARCHAR(2) 
-                        strSQL &= ",NULL"                       'RANDETAILNUMBER
-                        'PARTNO NVARCHAR(20) Not NULL
-                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 2).Value)
-                        'PARTNAME NVARCHAR(100)
-                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 3).Value).ToString.ToUpper
-                        'PRODUCT NVARCHAR(100)
-                        strSQL &= ",''"
-                        'HSCODE NVARCHAR(20)
-                        strSQL &= "," & GetHSCode(WorksheetCI.Cells(eRowNumber, 2).Value)
-                        'CI_REV NVARCHAR(10) 
-                        strSQL &= ",''"
-                        'CI_PUN NVARCHAR(5) 
-                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 5).Value.ToString.ToUpper.Replace("PCS", "PC"))
-                        'CI_MPQ NVARCHAR(10) 
-                        strSQL &= ",''"
-                        'CI_QTY Decimal(14,0) 
-                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 7).Value)
-                        'CI_KGS Decimal(14,1) 
-                        strSQL &= ",'0.0'"
-                        'CI_UPRICE_USD Decimal(14,2)
-                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 9).Value)
-                        'CI_AMOUNT_USD Decimal(14,2) 
-                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 10).Value)
 
-                        'PL_SUPPLIERCODE NVARCHAR(10) 
-                        strSQL &= ",'' "
-                        'PL_PUN NVARCHAR(5) 
-                        strSQL &= ",'' "
-                        'PL_CBM NVARCHAR(10) 
-                        strSQL &= ",'' "
-                        'PL_QTY Decimal(14'0) 
-                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 7).Value)
-                        'PL_NWEIGHTKGS Decimal(14,2) 
-                        strSQL &= ",NULL "
-                        'PL_GWEIGHTKGS Decimal(14,2) 
-                        strSQL &= ",NULL "
-                        '포장개수
-                        strSQL &= ",'0' "
+                        strSQL &= "'" & RowNumber.ToString & "'"                                                 'SEQNO BIGINT  Not NULL 
+                        strSQL &= ",'" & detailCount & "'"                                                             'DETAILSEQNO INT NOT NULL
+                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 1).Value)               'ORIGINALDETAILSEQNO INT NOT NULL
+                        strSQL &= "," & GetConventionCode(WorksheetCI.Cells(eRowNumber, 2).Value)   'CONVENTIONCODE NVARCHAR(100) 
+                        strSQL &= ",NULL"                                                                                 'RANNUMBER NVARCHAR(3) 
+                        strSQL &= ",NULL"                                                                                 'RANDETAILNUMBER NVARCHAR(2) 
+                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 2).Value)               'PARTNO NVARCHAR(20) Not NULL
+                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 3).Value).ToString.ToUpper  'PARTNAME NVARCHAR(100)
+                        strSQL &= ",''"                                                                                         'PRODUCT NVARCHAR(100)
+                        strSQL &= "," & GetHSCode(WorksheetCI.Cells(eRowNumber, 2).Value)               'HSCODE NVARCHAR(20)
+                        strSQL &= ",''"                                                                                         'CI_REV NVARCHAR(10) 
+                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 5).Value.ToString.ToUpper.Replace("PCS", "PC"))     'CI_PUN NVARCHAR(5) 
+                        strSQL &= ",''"                                                                                                     'CI_MPQ NVARCHAR(10) 
+                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 7).Value)                             'CI_QTY Decimal(14,0) 
+                        strSQL &= ",'0.0'"                                                                                                 'CI_KGS Decimal(14,1) 
+                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 8).Value)                             'CI_UPRICE_USD Decimal(14,2)
+                        strSQL &= "," & ColumnSet(WorksheetCI.Cells(eRowNumber, 9).Value)                             'CI_AMOUNT_USD Decimal(14,2) 
+                        strSQL &= ",'' "                                                                                                    'PL_SUPPLIERCODE NVARCHAR(10) 
+                        strSQL &= ",'' "                                                                                                    'PL_PUN NVARCHAR(5) 
+                        strSQL &= ",'' "                                                                                                    'PL_CBM NVARCHAR(10) 
+                        strSQL &= ",'0' "                             'PL_QTY Decimal(14'0) 
+                        strSQL &= ",NULL "                                                                                              'PL_NWEIGHTKGS Decimal(14,2) 
+                        strSQL &= ",NULL "                                                                                              'PL_GWEIGHTKGS Decimal(14,2) 
+                        strSQL &= ",'0' "   '포장개수
                         strSQL &= ",'' "
                         strSQL &= ")"
                         cmd = New SqlCommand(strSQL, dbConn)

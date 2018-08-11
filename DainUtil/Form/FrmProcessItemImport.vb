@@ -74,19 +74,25 @@ Public Class FrmProcessItemImport
         Dim SeqNO As Integer = 0
 
         Try
+            'strSQL = " IF EXISTS (SELECT * FROM SYSOBJECTS   WHERE ID = OBJECT_ID('W_M_ITEM') ) "
+            'strSQL &= " DROP TABLE W_M_ITEM "
+            'cmd = New SqlCommand(strSQL, dbConn)
+            'cmd.ExecuteNonQuery()
 
-            strSQL = " CREATE TABLE W_M_ITEM( "
-            strSQL &= " SEQNO BIGINT NOT NULL"
-            strSQL &= " ,PARTNO NVARCHAR(20) Not NULL"
-            strSQL &= " ,PARTNAME NVARCHAR(255) "
-            strSQL &= " ,HSCODE NVARCHAR(20) "
-            strSQL &= " ,PRODUCT  NVARCHAR(255) "
-            strSQL &= " ,CONVENTIONCODE NVARCHAR(100) "
-            strSQL &= " ,STANDARDPARTNAME NVARCHAR(255) "
-            strSQL &= " ,TRADEPARTNAME NVARCHAR(255) "
-            strSQL &= " ) "
+            'strSQL = " CREATE TABLE W_M_ITEM( "
+            'strSQL &= " SEQNO BIGINT NOT NULL"
+            'strSQL &= " ,PARTNO NVARCHAR(20) Not NULL"
+            'strSQL &= " ,PARTNAME NVARCHAR(255) "
+            'strSQL &= " ,HSCODE NVARCHAR(20) "
+            'strSQL &= " ,PRODUCT  NVARCHAR(255) "
+            'strSQL &= " ,CONVENTIONCODE NVARCHAR(100) "
+            'strSQL &= " ,STANDARDPARTNAME NVARCHAR(255) "
+            'strSQL &= " ,TRADEPARTNAME NVARCHAR(255) "
+            'strSQL &= " ) "
+            strSQL = " TRUNCATE TABLE W_M_ITEM "
             cmd = New SqlCommand(strSQL, dbConn)
             cmd.ExecuteNonQuery()
+            cmd.Dispose()
 
             Excel = New Excel.Application
             Workbook = Excel.Workbooks.Open(FilePath)
@@ -104,14 +110,14 @@ Public Class FrmProcessItemImport
                 SeqNO = SeqNO + 1
                 strSQL = "INSERT INTO W_M_ITEM VALUES( "
                 strSQL &= " '" & SeqNO & "'"
-                strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 1).Value).ToUpper
-                strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 2).Value).ToUpper
-                strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 3).Value).ToUpper
-                strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 4).Value).ToUpper
-                strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 5).Value).ToString().Replace("-2146826246", "해당없음")
-                strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 6).Value).ToUpper
-
-                strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 7).Value).ToUpper
+                strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 1).Value).ToUpper                                                        ''제품코드  
+                strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 2).Value).ToUpper                                                        ''품명규격1 
+                'strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 3).Value).ToUpper                                                        ''??
+                strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 4).Value).ToUpper                                                        ''세번부호
+                strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 5).Value).ToUpper                                                        ''제조사
+                strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 6).Value).ToString().Replace("-2146826246", "해당없음")        ''협정
+                strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 7).Value).ToUpper                                                        ''표준품명
+                strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 8).Value).ToUpper                                                        ''거래품명
                 strSQL &= ")"
                 cmd = New SqlCommand(strSQL, dbConn)
                 cmd.ExecuteNonQuery()
@@ -124,7 +130,7 @@ Public Class FrmProcessItemImport
             Workbook.Close(False)
             Excel.Quit()
 
-            strSQL = " SELECT X.* FROM (SELECT  PARTNO, COUNT(*) AS COUNT FROM W_M_ITEM GROUP BY PARTNO) X WHERE X.PARTNO > 1 "
+            strSQL = " SELECT X.* FROM (SELECT  PARTNO, COUNT(*) AS COUNT FROM W_M_ITEM GROUP BY PARTNO) X WHERE X.COUNT > 1 "
             cmd = New SqlCommand(strSQL, dbConn)
             dr = cmd.ExecuteReader
             While dr.Read
@@ -157,9 +163,9 @@ Public Class FrmProcessItemImport
             cmd.ExecuteNonQuery()
             addlog("상품마스터를 반영처리했습니다. .", 3)
 
-            strSQL = " DROP TABLE W_M_ITEM "
-            cmd = New SqlCommand(strSQL, dbConn)
-            cmd.ExecuteNonQuery()
+            'strSQL = " DROP TABLE W_M_ITEM "
+            'cmd = New SqlCommand(strSQL, dbConn)
+            'cmd.ExecuteNonQuery()
 
             MsgBoxInformation("엑셀 임포트가 성공했습니다.")
             addlog("엑셀 임포트가 성공했습니다.", 3)

@@ -127,7 +127,8 @@ Public Class FrmItem
             cmd.Dispose()
 
             strSQL = "SELECT * FROM F_LISTOUTITEM "
-            strSQL &= " WHERE Visible = '1' "
+            strSQL &= " WHERE 1 = 1 "
+            'strSQL &= " AND Visible = '1' "
             strSQL &= " And MESSAGEID = '" & gMessageNumber & "'"
             strSQL &= " AND PRECESSINGCLASS = 'H'"
             strSQL &= " ORDER BY INDICATIONORDER "
@@ -195,6 +196,12 @@ Public Class FrmItem
 
                 DataGridView1.Columns(colindex + 1).Width = headerdatatable.Rows(colindex)("INDICATIONWIDTH")
                 DataGridView1.Columns(colindex + 1).HeaderCell.Style.Alignment = DataGridViewContentAlignment.BottomCenter
+
+                If headerdatatable.Rows(colindex)("VISIBLE") = 1 Then
+                    DataGridView1.Columns(colindex + 1).Visible = True
+                Else
+                    DataGridView1.Columns(colindex + 1).Visible = False
+                End If
 
                 Select Case headerdatatable.Rows(colindex)("INDICATIONWIDEPOSITION")
                     Case 1
@@ -283,13 +290,25 @@ Public Class FrmItem
     End Sub
     Dim DeleteProcessflag As Boolean = False
     Private Sub btnDelete_Click(sender As Object, e As EventArgs) Handles btnDelete.Click
+
+        Dim cmd As SqlCommand
+        Dim dr As SqlDataReader
+        Dim strSQL As String
+
         Me.Focus()
         Dim Count As Integer = 0
         Try
-            For i As Integer = 0 To DataGridView1.Rows.Count + RowCountAdjust - 1
+            For i As Integer = DataGridView1.Rows.Count + RowCountAdjust - 1 To 0 Step -1
                 If DataGridView1.Rows(i).Cells(0).Value Then
+
+                    strSQL = " DELETE FROM M_ITEM WHERE SEQNO = '" & DataGridView1.Rows(i).Cells(DataGridView1.ColumnCount - 2).Value & "'"
+                    cmd = New SqlCommand(strSQL, dbConn)
+                    cmd.ExecuteNonQuery()
+                    cmd.Dispose()
+
                     Count = Count + 1
                     DataGridView1.Rows.RemoveAt(i)
+
                 End If
             Next
 
