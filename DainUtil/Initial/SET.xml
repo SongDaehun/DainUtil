@@ -12,8 +12,8 @@
 
     <!--<HostName>localhost\DAINTOOL</HostName>
     <DataBaseName>DAINTOOL</DataBaseName>
-    <UserId>sa</UserId>
-    <Password>daintool</Password>
+    <UserId>dain0501</UserId>
+    <Password>dain0501</Password>
     <DriverName>SQL Server</DriverName>
     <QueryTimeout>30</QueryTimeout>-->
   </DataBase>

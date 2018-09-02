@@ -124,7 +124,7 @@ Public Class FrmProcessExcelImport
                             ImportFailFile &= Importfiles(i)
                         End If
                     Case "KVPA"
-                        If ImportKVPO_CI(Importfiles(i)) Then
+                        If ImportKVPA_CI(Importfiles(i)) Then
                             SuccessCount = SuccessCount + 1
                         Else
                             FailCount = FailCount + 1

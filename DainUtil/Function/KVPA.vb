@@ -129,9 +129,11 @@ Module KVPA
                 If Workbook.Worksheets(j).Name.ToString.Contains("INVOICE") Then
                     WorksheetCI = Workbook.Worksheets(j)
                     For k = 0 To 15
-                        If WorksheetCI.Cells((k + 21), 2).Value IsNot Nothing Then
-                            If WorksheetCI.Cells((k + 21), 2).Value.ToString <> "" Then
-                                strSQL = "INSERT INTO #temp_PARTNO VALUES('" & filepath & "','" & WorksheetCI.Name.ToString & "','" & WorksheetCI.Cells((k + 21), 2).Value & "')"
+                        'If WorksheetCI.Cells((k + 21), 2).Value IsNot Nothing Then
+                        '    If WorksheetCI.Cells((k + 21), 2).Value.ToString <> "" Then
+                        If WorksheetCI.Cells((k + 24), 2).Value IsNot Nothing Then
+                            If WorksheetCI.Cells((k + 24), 2).Value.ToString <> "" Then
+                                strSQL = "INSERT INTO #temp_PARTNO VALUES('" & filepath & "','" & WorksheetCI.Name.ToString & "','" & WorksheetCI.Cells((k + 24), 2).Value & "')"
                                 cmd = New SqlCommand(strSQL, dbConn)
                                 cmd.ExecuteNonQuery()
                                 cmd.Dispose()
@@ -452,7 +454,7 @@ Module KVPA
                     'PL_TOTAL_GWEIGHT DECIMAL(14,2)
                     'strSQL &= " ," & ColumnSet(WorksheetPL.Cells(22, 7).Value.ToString.ToUpper.Replace(" ", "").Replace("TOTALG/WEIGHT:", "").Replace("KG", ""))
 
-                    Dim iRow As Integer = 19
+                    Dim iRow As Integer = 24
                     While WorksheetPL.Cells(iRow, 3).Value Is Nothing
                         iRow = iRow + 1
                     End While
@@ -466,9 +468,10 @@ Module KVPA
                     'PL_TOTAL_NWEIGHT DECIMAL(14,2)
                     strSQL &= " ," & ColumnSet(WorksheetPL.Cells(iRow, 6).Value.ToString.ToUpper.Replace(" ", ""))
                     'PL_TOTAL_NWEIGHT_PLTS Decimal(14, 0)
-                    strSQL &= " ," & ColumnSet(WorksheetPL.Cells(iRow, 8).Value.ToString.ToUpper.Replace(" ", ""))
-                    TotalPallet = WorksheetPL.Cells(iRow, 8).Value.ToString.ToUpper.Replace(" ", "")
-                    'PL_TOTAL_GWEIGHT DECIMAL(14,2)
+                    strSQL &= " ," & ColumnSet(WorksheetPL.Cells(iRow, 10).Value.ToString.ToUpper.Replace(" ", ""))
+                    'TotalPallet = WorksheetPL.Cells(iRow, 8).Value.ToString.ToUpper.Replace(" ", "")
+                    TotalPallet = WorksheetPL.Cells(iRow, 10).Value.ToString.ToUpper.Replace(" ", "")
+                    'PL_TOTAL_GWEIGHT DECIMAL(14,2)         --
                     strSQL &= " ," & ColumnSet(WorksheetPL.Cells(iRow, 7).Value.ToString.ToUpper.Replace(" ", ""))
 
                     'PICKING LIST END
@@ -485,11 +488,12 @@ Module KVPA
                     cmd.Dispose()
                     WriteLog(strSQL, W)
 
-                    eRowNumber = 1
+                    eRowNumber = 20
                     While True
                         eRowNumber = eRowNumber + 1
-                        If WorksheetCI.Cells(eRowNumber, 1).Value IsNot Nothing Then
-                            If WorksheetCI.Cells(eRowNumber, 1).Value.ToString.Replace(" ", "").ToUpper.Contains("NO") Then
+                        If WorksheetCI.Cells(eRowNumber, 1).Value IsNot Nothing And WorksheetCI.Cells(eRowNumber, 2).Value IsNot Nothing Then
+                            If WorksheetCI.Cells(eRowNumber, 1).Value.ToString.Replace(" ", "").ToUpper.Contains("NO") And
+                                    WorksheetCI.Cells(eRowNumber, 2).Value.ToString.Replace(" ", "").ToUpper.Contains("PARTNO") Then
                                 eRowNumber = eRowNumber + 2
                                 Exit While
                             End If
@@ -498,7 +502,10 @@ Module KVPA
 
                     detailCount = 1
                     While WorksheetCI.Cells(eRowNumber, 2).Value IsNot Nothing
-                        If WorksheetCI.Cells(eRowNumber, 2).Value = "0" Then Exit While
+                        If WorksheetCI.Cells(eRowNumber, 2).Value = "0" Or
+                           WorksheetCI.Cells(eRowNumber, 2).Value.ToString = "" Or
+                           WorksheetCI.Cells(eRowNumber, 2).Value.ToString = "-2146826246" Then _
+                            Exit While
                         'While WorksheetCI.Cells(iRow, 2).Value IsNot Nothing Or WorksheetCI.Cells(iRow, 2).Value <> ""
 
                         strSQL = "INSERT INTO " & W_CIPL_D & " VALUES("
