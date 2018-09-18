@@ -3633,6 +3633,143 @@ Module Initial
                 cmd.Dispose()
             End If
 
+            If vmenteStep < 28 Then
+
+                strSQL = " SELECT "
+                strSQL &= " SEQNO "
+                strSQL &= " ,PARTNO "
+                strSQL &= " ,PARTNAME "
+                strSQL &= " ,NULL AS PARTNAME1 "
+                strSQL &= " ,HSCODE "
+                strSQL &= " ,PRODUCT "
+                strSQL &= " ,CONVENTIONCODE "
+                strSQL &= " ,STANDARDPARTNAME "
+                strSQL &= " ,TRADEPARTNAME "
+                strSQL &= " INTO M_ITEM_BK "
+                strSQL &= " FROM M_ITEM "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " DROP TABLE M_ITEM "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " SELECT * INTO M_ITEM FROM M_ITEM_BK "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " DROP TABLE M_ITEM_BK "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+
+                strSQL = " DROP TABLE W_M_ITEM "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " SELECT * INTO W_M_ITEM FROM M_ITEM "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " UPDATE F_GENENV Set MENTESTEP = '28' "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+            End If
+
+            If vmenteStep < 29 Then
+                strSQL &= " DELETE FROM F_LISTOUTITEM WHERE MESSAGEID = '901' "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " INSERT INTO F_LISTOUTITEM VALUES('901','H','PARTNO','제품코드','80','0','1','1','0','') "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','PARTNAME','품명규격1 (규격내역)','200','0','2','1','0','') "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','PARTNAME1','품명규격2 (규격내역)','200','0','3','1','0','') "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','HSCODE','세번부호','80','0','4','1','0','') "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','PRODUCT','제조자','100','0','5','1','0','') "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','CONVENTIONCODE','협정','100','0','6','1','2','') "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','STANDARDPARTNAME','표준품명','200','0','7','1','0','') "
+                strSQL &= " INSERT INTO F_LISTOUTITEM VALUES('901','H','TRADEPARTNAME','거래품명','200','0','8','1','0','') "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+
+                strSQL = " DELETE FROM F_LISTOUTITEM_INI  "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " INSERT INTO F_LISTOUTITEM_INI  SELECT * FROM F_LISTOUTITEM "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " UPDATE F_GENENV Set MENTESTEP = '29' "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+
+            If vmenteStep < 30 Then
+                strSQL = " SELECT "
+                strSQL &= " SEQNO "
+                strSQL &= " ,PARTNO "
+                strSQL &= " ,PARTNAME "
+                strSQL &= " ,PARTNAME AS PARTNAME1 "
+                strSQL &= " ,HSCODE "
+                strSQL &= " ,PRODUCT "
+                strSQL &= " ,CONVENTIONCODE "
+                strSQL &= " ,STANDARDPARTNAME "
+                strSQL &= " ,TRADEPARTNAME "
+                strSQL &= " INTO M_ITEM_BK "
+                strSQL &= " FROM M_ITEM "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " DROP TABLE M_ITEM "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " SELECT * INTO M_ITEM FROM M_ITEM_BK "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " DROP TABLE M_ITEM_BK "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+
+                strSQL = " DROP TABLE W_M_ITEM "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " SELECT * INTO W_M_ITEM FROM M_ITEM "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                strSQL = " UPDATE F_GENENV Set MENTESTEP = '30' "
+                cmd = New SqlCommand(strSQL, dbConn)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+            End If
+
+
             Return True
         Catch ex As Exception
             MsgBoxFail(ex.Message)

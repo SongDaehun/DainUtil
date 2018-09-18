@@ -112,7 +112,7 @@ Public Class FrmProcessItemImport
                 strSQL &= " '" & SeqNO & "'"
                 strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 1).Value).ToUpper                                                        ''제품코드  
                 strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 2).Value).ToUpper                                                        ''품명규격1 
-                'strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 3).Value).ToUpper                                                        ''??
+                strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 3).Value).ToUpper                                                        ''품명규격2 
                 strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 4).Value).ToUpper                                                        ''세번부호
                 strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 5).Value).ToUpper                                                        ''제조사
                 strSQL &= " ," & ColumnSet(WorksheetMITEM.Cells(i, 6).Value).ToString().Replace("-2146826246", "해당없음")        ''협정
