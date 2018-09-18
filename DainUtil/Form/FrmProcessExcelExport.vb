@@ -523,13 +523,24 @@ Public Class FrmProcessItemExport
             WorksheetMITEM = Workbook.Worksheets(1)
             WorksheetMITEM.Cells(1, 1).Value = "제품코드"
             WorksheetMITEM.Cells(1, 2).Value = "품명규격1(규격내역)"
-            WorksheetMITEM.Cells(1, 3).Value = "세번부호"
-            WorksheetMITEM.Cells(1, 4).Value = "제조자"
-            WorksheetMITEM.Cells(1, 5).Value = "협정"
-            WorksheetMITEM.Cells(1, 6).Value = "표준품명"
-            WorksheetMITEM.Cells(1, 7).Value = "거래품명"
-            WorksheetMITEM.Range("A1", "G1").Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
-            WorksheetMITEM.Cells.Columns("A:G").NumberFormatLocal = "@"
+            WorksheetMITEM.Cells(1, 3).Value = "품명규격2(규격내역)"
+            WorksheetMITEM.Cells(1, 4).Value = "세번부호"
+            WorksheetMITEM.Cells(1, 5).Value = "제조자"
+            WorksheetMITEM.Cells(1, 6).Value = "협정"
+            WorksheetMITEM.Cells(1, 7).Value = "표준품명"
+            WorksheetMITEM.Cells(1, 8).Value = "거래품명"
+            WorksheetMITEM.Range("A1", "H1").Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
+            WorksheetMITEM.Cells.Columns("A:H").NumberFormatLocal = "@"
+
+            'WorksheetMITEM.Cells(1, 1).Value = "제품코드"
+            'WorksheetMITEM.Cells(1, 2).Value = "품명규격1(규격내역)"
+            'WorksheetMITEM.Cells(1, 3).Value = "세번부호"
+            'WorksheetMITEM.Cells(1, 4).Value = "제조자"
+            'WorksheetMITEM.Cells(1, 5).Value = "협정"
+            'WorksheetMITEM.Cells(1, 6).Value = "표준품명"
+            'WorksheetMITEM.Cells(1, 7).Value = "거래품명"
+            'WorksheetMITEM.Range("A1", "G1").Borders(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
+            'WorksheetMITEM.Cells.Columns("A:G").NumberFormatLocal = "@"
 
             strSQL = XmlReadVal(GetQueryFullPath, "root/EXPORT/ITEM")
 
@@ -543,18 +554,38 @@ Public Class FrmProcessItemExport
                 WorksheetMITEM.Cells(i, 2).NumberFormatLocal = "@"
                 WorksheetMITEM.Cells(i, 2).Value = dr("PARTNAME")
 
-                WorksheetMITEM.Cells(i, 3).NumberFormatLocal = "G/표준"
-                WorksheetMITEM.Cells(i, 3).Value = dr("HSCODE")
+                WorksheetMITEM.Cells(i, 3).NumberFormatLocal = "@"
+                WorksheetMITEM.Cells(i, 3).Value = dr("PARTNAME1")
 
-                WorksheetMITEM.Cells(i, 4).NumberFormatLocal = "@"
-                WorksheetMITEM.Cells(i, 4).Value = dr("PRODUCT")
+                WorksheetMITEM.Cells(i, 4).NumberFormatLocal = "G/표준"
+                WorksheetMITEM.Cells(i, 4).Value = dr("HSCODE")
 
                 WorksheetMITEM.Cells(i, 5).NumberFormatLocal = "@"
-                WorksheetMITEM.Cells(i, 5).Value = dr("CONVENTIONCODE")
+                WorksheetMITEM.Cells(i, 5).Value = dr("PRODUCT")
 
                 WorksheetMITEM.Cells(i, 6).NumberFormatLocal = "@"
-                WorksheetMITEM.Cells(i, 6).Value = dr("STANDARDPARTNAME")
-                WorksheetMITEM.Cells(i, 7).Value = dr("TRADEPARTNAME")
+                WorksheetMITEM.Cells(i, 6).Value = dr("CONVENTIONCODE")
+
+                WorksheetMITEM.Cells(i, 7).NumberFormatLocal = "@"
+                WorksheetMITEM.Cells(i, 7).Value = dr("STANDARDPARTNAME")
+                WorksheetMITEM.Cells(i, 8).Value = dr("TRADEPARTNAME")
+
+
+
+                'WorksheetMITEM.Cells(i, 3).NumberFormatLocal = "G/표준"
+                'WorksheetMITEM.Cells(i, 3).Value = dr("HSCODE")
+
+                'WorksheetMITEM.Cells(i, 4).NumberFormatLocal = "@"
+                'WorksheetMITEM.Cells(i, 4).Value = dr("PRODUCT")
+
+                'WorksheetMITEM.Cells(i, 5).NumberFormatLocal = "@"
+                'WorksheetMITEM.Cells(i, 5).Value = dr("CONVENTIONCODE")
+
+                'WorksheetMITEM.Cells(i, 6).NumberFormatLocal = "@"
+                'WorksheetMITEM.Cells(i, 6).Value = dr("STANDARDPARTNAME")
+                'WorksheetMITEM.Cells(i, 7).Value = dr("TRADEPARTNAME")
+
+
                 'ProgressBar1.Value = ProgressBar1.Value + 1
                 addlog("[" & dr("PARTNO") & "] 출력", 1)
                 Application.DoEvents()
